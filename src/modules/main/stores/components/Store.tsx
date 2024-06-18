@@ -1,33 +1,44 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
+import React from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import FastImage from 'react-native-fast-image';
 import {Text} from 'react-native-paper';
 
+import {BorderImage} from '../../../../components/image/BorderImage';
 import {useAppTheme} from '../../../../utils/theme';
 
-interface StoreImage {
-  source: any;
-}
+export type StoreModel = {
+  id: string;
+  name: string;
+  categories: string[];
+  iconUrl?: string;
+  address: {
+    street: string;
+    locality: string;
+  };
+};
 
-const NoImageAvailable = require('../../../../assets/noImage.png');
-
-const StoreImage: React.FC<StoreImage> = ({source}) => {
-  const theme = useAppTheme();
-  const [imageSource, setImageSource] = useState(source);
-  const styles = makeStyles(theme.colors);
+const StoreSummary = ({store}: {store: StoreModel}) => {
+  const {colors} = useAppTheme();
+  const styles = makeStyles(colors);
 
   return (
-    <FastImage
-      resizeMode={FastImage.resizeMode.contain}
-      source={imageSource}
-      style={styles.brandImage}
-      onError={() => setImageSource(NoImageAvailable)}
-    />
+    <View style={styles.textContainer}>
+      <Text style={styles.name} numberOfLines={1} ellipsizeMode={'tail'}>
+        {store.name}
+      </Text>
+      <Text style={styles.details} numberOfLines={1} ellipsizeMode={'tail'}>
+        {store?.categories?.join(', ')}
+      </Text>
+      <Text style={styles.details} numberOfLines={1} ellipsizeMode={'tail'}>
+        {store?.address?.street}, {store?.address?.locality}
+      </Text>
+    </View>
   );
 };
 
-const Store = ({store}: {store: any}) => {
+const NoImageAvailable = require('../../../../assets/noImage.png');
+
+const Store = ({store, width = 96}: {store: StoreModel; width: number}) => {
   const navigation = useNavigation<any>();
   const {colors} = useAppTheme();
   const styles = makeStyles(colors);
@@ -44,24 +55,11 @@ const Store = ({store}: {store: any}) => {
     <TouchableOpacity
       style={styles.container}
       onPress={() => navigateToDetails(store)}>
-      <StoreImage
-        source={
-          store?.provider_descriptor?.images?.length > 0
-            ? {uri: store?.provider_descriptor?.images[0]}
-            : NoImageAvailable
-        }
+      <BorderImage
+        dimension={width}
+        source={store.iconUrl ? {uri: store.iconUrl} : NoImageAvailable}
       />
-      <View style={styles.textContainer}>
-        <Text style={styles.name} numberOfLines={1} ellipsizeMode={'tail'}>
-          {store?.provider_descriptor?.name}
-        </Text>
-        <Text style={styles.details} numberOfLines={1} ellipsizeMode={'tail'}>
-          {store?.categories?.join(', ')}
-        </Text>
-        <Text style={styles.details} numberOfLines={1} ellipsizeMode={'tail'}>
-          {store?.address?.street}, {store?.address?.locality}
-        </Text>
-      </View>
+      <StoreSummary store={store} />
     </TouchableOpacity>
   );
 };
@@ -72,14 +70,6 @@ const makeStyles = (colors: any) =>
       flexDirection: 'row',
       alignItems: 'flex-start',
       padding: 10,
-    },
-    brandImage: {
-      borderRadius: 8,
-      width: 96,
-      height: 96,
-      marginRight: 8,
-      borderColor: colors.neutral100,
-      borderWidth: 1,
     },
     name: {
       color: colors.neutral400,

@@ -1,24 +1,38 @@
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import {Text} from 'react-native-paper';
-import FastImage from 'react-native-fast-image';
-import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {CURRENCY_SYMBOLS, FB_DOMAIN} from '../../../../utils/constants';
-import {useAppTheme} from '../../../../utils/theme';
+import React from 'react';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Text} from 'react-native-paper';
+import {BorderImage} from '../../../../components/image/BorderImage';
 import VegNonVegTag from '../../../../components/products/VegNonVegTag';
 import useFormatNumber from '../../../../hooks/useFormatNumber';
+import {CURRENCY_SYMBOLS, FB_DOMAIN} from '../../../../utils/constants';
+import {useAppTheme} from '../../../../utils/theme';
 
-interface Product {
-  product: any;
+export interface Product {
+  product: ProductModel;
   search?: boolean;
 }
 
 const NoImageAvailable = require('../../../../assets/noImage.png');
 
-const Product: React.FC<Product> = ({product, search = false}) => {
+export type ProductModel = {
+  id: string;
+  name: string;
+  unitizedValue: string;
+  price: string;
+  currency: string;
+  imageUrl?: string;
+  search?: boolean;
+  domain: string;
+  tags: string[];
+};
+
+const Product: React.FC<Product> = (productModel: Product) => {
+  const {product, search} = productModel;
+
   const {formatNumber} = useFormatNumber();
-  const isFBDomain = product.context.domain === FB_DOMAIN;
+  const isFBDomain = product.domain === FB_DOMAIN;
   const theme = useAppTheme();
   const styles = makeStyles(theme.colors);
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -26,12 +40,8 @@ const Product: React.FC<Product> = ({product, search = false}) => {
   const navigateToProductDetails = () => {
     if (search) {
       const routeParams: any = {
-        brandId: product.provider_details.id,
+        brandId: product.id,
       };
-
-      if (product.location_details) {
-        routeParams.outletId = product.location_details.id;
-      }
       navigation.navigate('BrandDetails', routeParams);
     } else {
       navigation.navigate('ProductDetails', {productId: product.id});
@@ -42,18 +52,17 @@ const Product: React.FC<Product> = ({product, search = false}) => {
     <TouchableOpacity
       style={styles.container}
       onPress={navigateToProductDetails}>
-      <FastImage
-        style={styles.gridImage}
+      <BorderImage
         source={
-          product?.item_details?.descriptor?.symbol
-            ? {uri: product?.item_details?.descriptor?.symbol}
+          product.imageUrl && product.imageUrl !== ''
+            ? {uri: product.imageUrl}
             : NoImageAvailable
         }
-        resizeMode={FastImage.resizeMode.contain}
+        dimension={96}
       />
       {isFBDomain && (
         <View style={styles.vegNonVegContainer}>
-          <VegNonVegTag tags={product.item_details.tags} />
+          <VegNonVegTag tags={product.tags} />
         </View>
       )}
       <Text
@@ -61,19 +70,21 @@ const Product: React.FC<Product> = ({product, search = false}) => {
         numberOfLines={1}
         ellipsizeMode={'tail'}
         style={styles.name}>
-        {product?.item_details?.descriptor?.name}
+        {product.name}
       </Text>
-      <Text
-        variant={'labelSmall'}
-        numberOfLines={1}
-        ellipsizeMode={'tail'}
-        style={styles.provider}>
-        {product?.provider_details?.descriptor?.name}
-      </Text>
+      {product.unitizedValue && (
+        <Text
+          variant={'labelSmall'}
+          numberOfLines={1}
+          ellipsizeMode={'tail'}
+          style={styles.provider}>
+          {product.unitizedValue}
+        </Text>
+      )}
       <View style={styles.row}>
         <Text variant={'bodyLarge'} style={styles.amount}>
-          {CURRENCY_SYMBOLS[product?.item_details?.price?.currency]}
-          {formatNumber(product?.item_details?.price?.value)}
+          {CURRENCY_SYMBOLS[product.currency]}
+          {formatNumber(product.price)}
         </Text>
       </View>
     </TouchableOpacity>
@@ -88,8 +99,8 @@ const makeStyles = (colors: any) =>
       marginBottom: 20,
     },
     gridImage: {
-      width: '100%',
-      height: 180,
+      width: 96,
+      height: 96,
       borderRadius: 12,
       marginBottom: 12,
     },

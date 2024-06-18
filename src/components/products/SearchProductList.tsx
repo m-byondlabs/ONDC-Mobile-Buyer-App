@@ -1,25 +1,23 @@
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {FlatList, StyleSheet, View} from 'react-native';
-import {ProgressBar, Text} from 'react-native-paper';
 import {useTranslation} from 'react-i18next';
+import {FlatList, StyleSheet, View} from 'react-native';
+import {ProgressBar} from 'react-native-paper';
 import {useSelector} from 'react-redux';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
+import useBhashini from '../../hooks/useBhashini';
 import useNetworkErrorHandling from '../../hooks/useNetworkErrorHandling';
 import useNetworkHandling from '../../hooks/useNetworkHandling';
-import Product from '../../modules/main/provider/components/Product';
+import useReadAudio from '../../hooks/useReadAudio';
+import Product, {
+  ProductModel,
+} from '../../modules/main/provider/components/Product';
+import Store, {StoreModel} from '../../modules/main/stores/components/Store';
 import {API_BASE_URL, PRODUCT_SEARCH} from '../../utils/apiActions';
 import {BRAND_PRODUCTS_LIMIT} from '../../utils/constants';
-import ProductSkeleton from '../skeleton/ProductSkeleton';
-import {
-  compareIgnoringSpaces,
-  showToastWithGravity,
-  skeletonList,
-} from '../../utils/utils';
 import {useAppTheme} from '../../utils/theme';
-import useBhashini from '../../hooks/useBhashini';
-import useReadAudio from '../../hooks/useReadAudio';
+import {compareIgnoringSpaces, showToastWithGravity} from '../../utils/utils';
 
 interface SearchProductList {
   searchQuery: string;
@@ -55,6 +53,7 @@ const SearchProducts: React.FC<SearchProductList> = ({searchQuery}) => {
   const [productsRequested, setProductsRequested] = useState<boolean>(false);
   const [isGridView, setIsGridView] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
+  const [providers, setProviders] = useState<any[]>([]);
 
   const searchProducts = async (pageNumber: number) => {
     try {
@@ -76,6 +75,7 @@ const SearchProducts: React.FC<SearchProductList> = ({searchQuery}) => {
         url,
         productSearchSource.current.token,
       );
+      massageSearchResponse(data);
       setTotalProducts(data.response.count);
       setProducts(data.response.data);
     } catch (error) {
@@ -85,8 +85,32 @@ const SearchProducts: React.FC<SearchProductList> = ({searchQuery}) => {
     }
   };
 
+  const massageSearchResponse = (data: any) => {
+    const products = data.response.data;
+
+    const providerSet = new Set();
+    products
+      .map((product: any) => product.provider_details)
+      .forEach((provider: any) => {
+        providerSet.add(provider);
+      });
+
+    providerSet.forEach((provider: any) => {
+      const providerProducts = products.filter(
+        (product: any) => product.provider_details.id === provider.id,
+      );
+      provider.products = providerProducts;
+    });
+
+    setProviders(Array.from(providerSet));
+
+    // group products by provider
+
+    return products;
+  };
+
   const renderItem = useCallback(({item}) => {
-    return <Product product={item} search />;
+    return <Product product={itemDetailsToProductModel(item)} search />;
   }, []);
 
   useEffect(() => {
@@ -165,43 +189,89 @@ const SearchProducts: React.FC<SearchProductList> = ({searchQuery}) => {
     }, []),
   );
 
+  const itemDetailsToProductModel = (item: any): ProductModel => {
+    const {item_details, context} = item;
+    const {descriptor, quantity} = item_details;
+    const imageUrl =
+      descriptor.symbol.length > 0
+        ? descriptor.symbol
+        : descriptor.images && descriptor.images.length > 0
+        ? descriptor.images[0]
+        : undefined;
+    const measure = quantity?.unitized?.measure;
+    const unitizedValue = measure ? `${measure.value} ${measure.unit}` : '';
+
+    const priceObject = item_details.price;
+    let price = '';
+    let currency = '';
+    if (priceObject) {
+      price = priceObject.value;
+      currency = priceObject.currency;
+    }
+
+    return {
+      id: item_details.id,
+      imageUrl: imageUrl,
+      name: descriptor.name,
+      price,
+      currency,
+      tags: descriptor.tags,
+      unitizedValue,
+      domain: context.domain,
+    };
+  };
+
+  const horizontalProductList = products => {
+    return (
+      <FlatList
+        data={products}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        horizontal
+      />
+    );
+  };
+
+  const storeWithProductsComponent = item => {
+    const store = providerToStoreModel(item.item);
+    return (
+      <View style={styles.container}>
+        <Store store={store} width={32} />
+        {horizontalProductList(item.item.products)}
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       {userInteractionStarted && (
         <ProgressBar indeterminate color={theme.colors.success600} />
       )}
-      <View style={styles.filterContainer}>
-        <View />
-      </View>
       {productsRequested ? (
         <FlatList
-          numColumns={2}
-          data={skeletonList}
-          renderItem={() => <ProductSkeleton />}
-          contentContainerStyle={styles.listContainer}
+          data={providers}
+          renderItem={storeWithProductsComponent}
           keyExtractor={item => item.id}
         />
       ) : (
-        <FlatList
-          key={'grid' + isGridView}
-          numColumns={isGridView ? 2 : 1}
-          data={products}
-          renderItem={renderItem}
-          ListEmptyComponent={() => (
-            <View style={styles.emptyContainer}>
-              <Text variant={'bodyMedium'}>
-                {t('Home.Search Product List.No products available')}
-              </Text>
-            </View>
-          )}
-          contentContainerStyle={
-            products.length === 0 ? styles.emptyContainer : styles.listContainer
-          }
-          keyExtractor={item => item.id}
-        />
+        <FlatList data={providers} renderItem={storeWithProductsComponent} />
       )}
     </View>
   );
+};
+
+const providerToStoreModel = (provider: any): StoreModel => {
+  // return with empty values
+  return {
+    id: provider.id,
+    iconUrl: provider.descriptor.symbol ?? '',
+    name: provider.descriptor.name ?? '',
+    categories: [],
+    address: {
+      street: '',
+      locality: '',
+    },
+  };
 };
 
 export default SearchProducts;
@@ -211,6 +281,9 @@ const makeStyles = (colors: any) =>
     container: {
       flex: 1,
       backgroundColor: colors.white,
+      paddingVertical: 0,
+      paddingHorizontal: 8,
+      width: '100%',
     },
     filterContainer: {
       flexDirection: 'row',
