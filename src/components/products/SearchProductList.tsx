@@ -13,9 +13,10 @@ import useReadAudio from '../../hooks/useReadAudio';
 import Product, {
   ProductModel,
 } from '../../modules/main/provider/components/Product';
-import Store, {StoreModel} from '../../modules/main/stores/components/Store';
+import Store from '../../modules/main/stores/components/Store';
 import {API_BASE_URL, PRODUCT_SEARCH} from '../../utils/apiActions';
 import {BRAND_PRODUCTS_LIMIT} from '../../utils/constants';
+import {searchResultsProviderToStoreModel} from '../../utils/formatter';
 import {useAppTheme} from '../../utils/theme';
 import {compareIgnoringSpaces, showToastWithGravity} from '../../utils/utils';
 
@@ -233,7 +234,7 @@ const SearchProducts: React.FC<SearchProductList> = ({searchQuery}) => {
   };
 
   const storeWithProductsComponent = item => {
-    const store = providerToStoreModel(item.item);
+    const store = searchResultsProviderToStoreModel(item.item);
     return (
       <View style={styles.container}>
         <Store store={store} width={32} />
@@ -258,20 +259,6 @@ const SearchProducts: React.FC<SearchProductList> = ({searchQuery}) => {
       )}
     </View>
   );
-};
-
-const providerToStoreModel = (provider: any): StoreModel => {
-  // return with empty values
-  return {
-    id: provider.id,
-    iconUrl: provider.descriptor.symbol ?? '',
-    name: provider.descriptor.name ?? '',
-    categories: [],
-    address: {
-      street: '',
-      locality: '',
-    },
-  };
 };
 
 export default SearchProducts;

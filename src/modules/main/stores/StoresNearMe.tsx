@@ -1,11 +1,12 @@
+import {useNavigation} from '@react-navigation/native';
+import React, {useEffect} from 'react';
+import {useTranslation} from 'react-i18next';
 import {FlatList, StyleSheet, View} from 'react-native';
 import {useSelector} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
-import {useTranslation} from 'react-i18next';
-import {useEffect} from 'react';
-import Store from './components/Store';
-import {useAppTheme} from '../../../utils/theme';
 import Page from '../../../components/page/Page';
+import {locationToStoreModels} from '../../../utils/formatter';
+import {useAppTheme} from '../../../utils/theme';
+import Store, {StoreModel} from './components/Store';
 
 const StoresNearMe = () => {
   const navigation = useNavigation();
@@ -20,16 +21,18 @@ const StoresNearMe = () => {
     });
   }, []);
 
-  const renderItem = ({item}: {item: any}) => <Store store={item} />;
+  const renderItem = ({item}: {item: StoreModel}) => (
+    <Store store={item} width={96} />
+  );
 
   return (
     <Page>
       <View style={styles.container}>
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={locations}
+          data={locationToStoreModels(locations)}
           renderItem={renderItem}
-          numColumns={3}
+          numColumns={1}
           keyExtractor={(item: any) => item.id}
         />
       </View>

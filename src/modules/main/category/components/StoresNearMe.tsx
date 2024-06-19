@@ -1,21 +1,22 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
 import axios from 'axios';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {FlatList, StyleSheet, View} from 'react-native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {useDispatch, useSelector} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {useTranslation} from 'react-i18next';
 
-import useNetworkHandling from '../../../../hooks/useNetworkHandling';
-import useNetworkErrorHandling from '../../../../hooks/useNetworkErrorHandling';
-import {API_BASE_URL, LOCATIONS} from '../../../../utils/apiActions';
-import {skeletonList} from '../../../../utils/utils';
-import {useAppTheme} from '../../../../utils/theme';
-import {saveStoresList} from '../../../../redux/stores/actions';
-import Store from '../../stores/components/Store';
 import SectionHeaderWithViewAll from '../../../../components/sectionHeaderWithViewAll/SectionHeaderWithViewAll';
-import { FB_DOMAIN } from "../../../../utils/constants";
+import useNetworkErrorHandling from '../../../../hooks/useNetworkErrorHandling';
+import useNetworkHandling from '../../../../hooks/useNetworkHandling';
+import {saveStoresList} from '../../../../redux/stores/actions';
+import {API_BASE_URL, LOCATIONS} from '../../../../utils/apiActions';
+import {FB_DOMAIN} from '../../../../utils/constants';
+import {locationToStoreModels} from '../../../../utils/formatter';
+import {useAppTheme} from '../../../../utils/theme';
+import {skeletonList} from '../../../../utils/utils';
+import Store from '../../stores/components/Store';
 
 interface StoresNearMe {
   domain?: string;
@@ -99,7 +100,7 @@ const StoresNearMe: React.FC<StoresNearMe> = ({domain}) => {
         {apiRequested ? (
           <FlatList
             contentContainerStyle={styles.listContainer}
-            numColumns={3}
+            numColumns={1}
             data={skeletonList}
             keyExtractor={item => item.id}
             renderItem={() => <BrandSkeleton />}
@@ -107,10 +108,10 @@ const StoresNearMe: React.FC<StoresNearMe> = ({domain}) => {
         ) : (
           <FlatList
             contentContainerStyle={styles.listContainer}
-            numColumns={3}
-            data={list}
+            numColumns={1}
+            data={locationToStoreModels(list)}
             keyExtractor={item => item.id}
-            renderItem={({item}) => <Store store={item} />}
+            renderItem={({item}) => <Store store={item} width={96} />}
           />
         )}
       </View>
@@ -124,12 +125,12 @@ const makeStyles = () =>
       marginTop: 12,
     },
     brand: {
-      width: 113,
+      width: '100%',
       marginRight: 11,
       marginBottom: 15,
     },
     brandSkeleton: {
-      width: 113,
+      width: '100%',
       height: 108,
       marginRight: 11,
     },

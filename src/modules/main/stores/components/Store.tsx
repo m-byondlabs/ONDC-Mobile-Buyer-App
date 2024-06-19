@@ -8,6 +8,7 @@ import {useAppTheme} from '../../../../utils/theme';
 
 export type StoreModel = {
   id: string;
+  brandId: string;
   name: string;
   categories: string[];
   iconUrl?: string;
@@ -43,18 +44,18 @@ const Store = ({store, width = 96}: {store: StoreModel; width: number}) => {
   const {colors} = useAppTheme();
   const styles = makeStyles(colors);
 
-  const navigateToDetails = (location: any) => {
+  const navigateToDetails = () => {
     const routeParams: any = {
-      brandId: location.provider,
+      brandId: store.brandId,
     };
-    routeParams.outletId = location.id;
+    routeParams.outletId = store.id;
     navigation.navigate('BrandDetails', routeParams);
   };
 
   return (
     <TouchableOpacity
       style={styles.container}
-      onPress={() => navigateToDetails(store)}>
+      onPress={() => navigateToDetails()}>
       <BorderImage
         dimension={width}
         source={store.iconUrl ? {uri: store.iconUrl} : NoImageAvailable}
