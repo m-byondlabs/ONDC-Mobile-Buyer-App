@@ -84,13 +84,17 @@ const SearchProducts: React.FC<SearchProductList> = ({searchQuery}) => {
       setProductsRequested(false);
     }
   };
-
   const massageSearchResponse = (data: any) => {
     const products = data.response.data;
 
     const providerSet = new Set();
     products
-      .map((product: any) => product.provider_details)
+      .map((product: any) => {
+        const provider = product.provider_details;
+        provider.location_details = product.location_details;
+        provider.context = product.context;
+        return provider;
+      })
       .forEach((provider: any) => {
         providerSet.add(provider);
       });

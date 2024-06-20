@@ -1,4 +1,5 @@
 import {StoreModel} from '../modules/main/stores/components/Store';
+import {CATEGORIES} from './categories';
 
 export const locationToStoreModels = (locationObj: any): StoreModel[] => {
   return locationObj.map((store: any) => {
@@ -19,16 +20,17 @@ export const locationToStoreModels = (locationObj: any): StoreModel[] => {
 export const searchResultsProviderToStoreModel = (
   provider: any,
 ): StoreModel => {
-  // return with empty values
+  const {id, address} = provider.location_details;
+  const {domain} = provider.context;
+
+  const category = CATEGORIES.find(item => item.domain === domain);
+
   return {
-    id: provider.id,
+    id,
     iconUrl: provider.descriptor.symbol ?? '',
     name: provider.descriptor.name ?? '',
-    categories: [],
-    address: {
-      street: '',
-      locality: '',
-    },
-    brandId: '', // TODO : fetch brandId for stores providing the search results
+    categories: [category.name],
+    address,
+    brandId: provider.id,
   };
 };
