@@ -1,23 +1,25 @@
 import React, {useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import {Text} from 'react-native-paper';
-import {useTranslation} from 'react-i18next';
 
-import CustomMenu from './CustomMenu';
 import Products from '../../../../components/products/Products';
 import {useAppTheme} from '../../../../utils/theme';
+import CustomMenu from './CustomMenu';
 import OutletDetails from './OutletDetails';
 
 interface OtherBrandDetails {
   provider: any;
   outlet: any;
   apiRequested: boolean;
+  defaultSearchQuery?: string;
 }
 
 const OtherBrandDetails: React.FC<OtherBrandDetails> = ({
   provider,
   outlet,
   apiRequested,
+  defaultSearchQuery = '',
 }) => {
   const {t} = useTranslation();
   const {colors} = useAppTheme();
@@ -43,6 +45,7 @@ const OtherBrandDetails: React.FC<OtherBrandDetails> = ({
             providerId={provider.id}
             customMenu={selectedMenu}
             subCategories={[]}
+            defaultSearchQuery={defaultSearchQuery}
           />
         </View>
       </ScrollView>

@@ -1,19 +1,20 @@
-import React, {useEffect, useRef, useState} from 'react';
-import axios from 'axios';
-import {StyleSheet, View} from 'react-native';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
+import axios from 'axios';
 import moment from 'moment';
-import {API_BASE_URL, PROVIDER, STORE_DETAILS} from '../../../utils/apiActions';
-import useNetworkHandling from '../../../hooks/useNetworkHandling';
-import useNetworkErrorHandling from '../../../hooks/useNetworkErrorHandling';
+import React, {useEffect, useRef, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
+import reactotron from '../../../../ReactotronConfig';
+import Page from '../../../components/page/Page';
 import BrandSkeleton from '../../../components/skeleton/BrandSkeleton';
+import useFormatDate from '../../../hooks/useFormatDate';
+import useNetworkErrorHandling from '../../../hooks/useNetworkErrorHandling';
+import useNetworkHandling from '../../../hooks/useNetworkHandling';
+import {API_BASE_URL, PROVIDER, STORE_DETAILS} from '../../../utils/apiActions';
+import {FB_DOMAIN} from '../../../utils/constants';
+import {useAppTheme} from '../../../utils/theme';
 import FBBrandDetails from './components/FBBrandDetails';
 import OtherBrandDetails from './components/OtherBrandDetails';
-import {FB_DOMAIN} from '../../../utils/constants';
-import Page from '../../../components/page/Page';
-import {useAppTheme} from '../../../utils/theme';
-import useFormatDate from '../../../hooks/useFormatDate';
 
 const CancelToken = axios.CancelToken;
 
@@ -31,6 +32,7 @@ const BrandDetails = ({route: {params}}: {route: any}) => {
     useState<boolean>(true);
   const {getDataWithAuth} = useNetworkHandling();
   const {handleApiError} = useNetworkErrorHandling();
+
 
   const getOutletDetails = async () => {
     try {
@@ -114,6 +116,7 @@ const BrandDetails = ({route: {params}}: {route: any}) => {
             provider={provider}
             outlet={outlet}
             apiRequested={apiRequested || outletDetailsRequested}
+            defaultSearchQuery={params.defaultSearchQuery}
           />
         )}
       </View>

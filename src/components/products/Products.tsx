@@ -1,30 +1,31 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import axios from 'axios';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
-import useNetworkHandling from '../../hooks/useNetworkHandling';
+import {ProgressBar} from 'react-native-paper';
+import {useSelector} from 'react-redux';
 import useNetworkErrorHandling from '../../hooks/useNetworkErrorHandling';
+import useNetworkHandling from '../../hooks/useNetworkHandling';
+import useReadAudio from '../../hooks/useReadAudio';
+import Product from '../../modules/main/provider/components/Product';
 import {API_BASE_URL, PRODUCT_SEARCH} from '../../utils/apiActions';
 import {BRAND_PRODUCTS_LIMIT} from '../../utils/constants';
-import Filters from './Filters';
+import {useAppTheme} from '../../utils/theme';
 import {
   compareIgnoringSpaces,
   showToastWithGravity,
   skeletonList,
 } from '../../utils/utils';
 import ProductSkeleton from '../skeleton/ProductSkeleton';
-import Product from '../../modules/main/provider/components/Product';
-import {useAppTheme} from '../../utils/theme';
+import Filters from './Filters';
 import ProductSearch from './ProductSearch';
-import useReadAudio from '../../hooks/useReadAudio';
-import {useSelector} from 'react-redux';
-import {ProgressBar} from 'react-native-paper';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
 interface Products {
   providerId: any;
   customMenu: any;
   subCategories: any[];
   search?: boolean;
+  defaultSearchQuery?: string;
 }
 
 const CancelToken = axios.CancelToken;
@@ -34,6 +35,7 @@ const Products: React.FC<Products> = ({
   customMenu = null,
   subCategories = [],
   search = false,
+  defaultSearchQuery = '',
 }) => {
   const voiceDetectionStarted = useRef<boolean>(false);
   const navigation = useNavigation<any>();
@@ -49,7 +51,7 @@ const Products: React.FC<Products> = ({
     setAllowRestarts,
   } = useReadAudio(language);
   const [productsRequested, setProductsRequested] = useState<boolean>(true);
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>(defaultSearchQuery);
   const [page, setPage] = useState<number>(1);
   const [products, setProducts] = useState<any[]>([]);
   const [totalProducts, setTotalProducts] = useState<number>(0);

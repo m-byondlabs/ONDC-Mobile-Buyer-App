@@ -19,6 +19,7 @@ export const locationToStoreModels = (locationObj: any): StoreModel[] => {
 
 export const searchResultsProviderToStoreModel = (
   provider: any,
+  searchQuery: string,
 ): StoreModel => {
   const {id, address} = provider.location_details;
   const {domain} = provider.context;
@@ -32,5 +33,6 @@ export const searchResultsProviderToStoreModel = (
     categories: [category.name],
     address,
     brandId: provider.id,
+    searchQuery,
   };
 };

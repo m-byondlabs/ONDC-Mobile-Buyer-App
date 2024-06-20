@@ -3,6 +3,7 @@ import React from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Text} from 'react-native-paper';
 
+import reactotron from '../../../../../ReactotronConfig';
 import {BorderImage} from '../../../../components/image/BorderImage';
 import {useAppTheme} from '../../../../utils/theme';
 
@@ -16,6 +17,7 @@ export type StoreModel = {
     street: string;
     locality: string;
   };
+  searchQuery?: string;
 };
 
 const StoreSummary = ({store}: {store: StoreModel}) => {
@@ -49,6 +51,7 @@ const Store = ({store, width = 96}: {store: StoreModel; width: number}) => {
       brandId: store.brandId,
     };
     routeParams.outletId = store.id;
+    routeParams.defaultSearchQuery = store.searchQuery;
     navigation.navigate('BrandDetails', routeParams);
   };
 

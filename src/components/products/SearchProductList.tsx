@@ -239,7 +239,7 @@ const SearchProducts: React.FC<SearchProductList> = ({searchQuery}) => {
   };
 
   const storeWithProductsComponent = item => {
-    const store = searchResultsProviderToStoreModel(item.item);
+    const store = searchResultsProviderToStoreModel(item.item, searchQuery);
     return (
       <View style={styles.container}>
         <Store store={store} width={32} />
