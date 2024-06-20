@@ -10,10 +10,9 @@ import useBhashini from '../../hooks/useBhashini';
 import useNetworkErrorHandling from '../../hooks/useNetworkErrorHandling';
 import useNetworkHandling from '../../hooks/useNetworkHandling';
 import useReadAudio from '../../hooks/useReadAudio';
-import Product, {
-  ProductModel,
-} from '../../modules/main/provider/components/Product';
+import ProductSearchResult from '../../modules/main/provider/components/ProductSearchResult';
 import Store from '../../modules/main/stores/components/Store';
+import {ProductModel} from '../../modules/main/types/Product';
 import {API_BASE_URL, PRODUCT_SEARCH} from '../../utils/apiActions';
 import {BRAND_PRODUCTS_LIMIT} from '../../utils/constants';
 import {searchResultsProviderToStoreModel} from '../../utils/formatter';
@@ -111,7 +110,9 @@ const SearchProducts: React.FC<SearchProductList> = ({searchQuery}) => {
   };
 
   const renderItem = useCallback(({item}) => {
-    return <Product product={itemDetailsToProductModel(item)} search />;
+    return (
+      <ProductSearchResult product={itemDetailsToProductModel(item)} search />
+    );
   }, []);
 
   useEffect(() => {

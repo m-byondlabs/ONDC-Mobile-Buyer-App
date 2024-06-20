@@ -17,7 +17,46 @@ export interface Product {
 
 const NoImageAvailable = require('../../../../assets/noImage.png');
 
-const Product: React.FC<Product> = (productModel: Product) => {
+const ProductSummary = ({product}: {product: ProductModel}) => {
+  const {formatNumber} = useFormatNumber();
+  const isFBDomain = product.domain === FB_DOMAIN;
+  const theme = useAppTheme();
+  const styles = makeStyles(theme.colors);
+
+  return (
+    <View style={styles.summaryContainer}>
+      {isFBDomain && (
+        <View style={styles.vegNonVegContainer}>
+          <VegNonVegTag tags={product.tags} />
+        </View>
+      )}
+      <Text
+        variant={'labelMedium'}
+        numberOfLines={1}
+        ellipsizeMode={'tail'}
+        style={styles.name}>
+        {product.name}
+      </Text>
+      {product.unitizedValue && (
+        <Text
+          variant={'labelSmall'}
+          numberOfLines={1}
+          ellipsizeMode={'tail'}
+          style={styles.provider}>
+          {product.unitizedValue}
+        </Text>
+      )}
+      <View style={styles.row}>
+        <Text variant={'bodyLarge'} style={styles.amount}>
+          {CURRENCY_SYMBOLS[product.currency]}
+          {formatNumber(product.price)}
+        </Text>
+      </View>
+    </View>
+  );
+};
+
+const ProductSearchResult: React.FC<Product> = (productModel: Product) => {
   const {product, search} = productModel;
 
   const {formatNumber} = useFormatNumber();
@@ -49,33 +88,7 @@ const Product: React.FC<Product> = (productModel: Product) => {
         }
         dimension={96}
       />
-      {isFBDomain && (
-        <View style={styles.vegNonVegContainer}>
-          <VegNonVegTag tags={product.tags} />
-        </View>
-      )}
-      <Text
-        variant={'labelMedium'}
-        numberOfLines={1}
-        ellipsizeMode={'tail'}
-        style={styles.name}>
-        {product.name}
-      </Text>
-      {product.unitizedValue && (
-        <Text
-          variant={'labelSmall'}
-          numberOfLines={1}
-          ellipsizeMode={'tail'}
-          style={styles.provider}>
-          {product.unitizedValue}
-        </Text>
-      )}
-      <View style={styles.row}>
-        <Text variant={'bodyLarge'} style={styles.amount}>
-          {CURRENCY_SYMBOLS[product.currency]}
-          {formatNumber(product.price)}
-        </Text>
-      </View>
+      <ProductSummary product={product} />
     </TouchableOpacity>
   );
 };
@@ -83,9 +96,20 @@ const Product: React.FC<Product> = (productModel: Product) => {
 const makeStyles = (colors: any) =>
   StyleSheet.create({
     container: {
+      width: 230,
       paddingHorizontal: 8,
       flex: 1,
+      flexDirection: 'row',
       marginBottom: 20,
+      marginHorizontal: 8,
+      borderRadius: 8,
+      padding: 12,
+      borderColor: colors.neutral100,
+      borderWidth: 1,
+    },
+    summaryContainer: {
+      flexDirection: 'column',
+      flex: 1,
     },
     gridImage: {
       width: 96,
@@ -118,4 +142,4 @@ const makeStyles = (colors: any) =>
     },
   });
 
-export default Product;
+export default ProductSearchResult;
