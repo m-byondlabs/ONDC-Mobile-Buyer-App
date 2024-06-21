@@ -2,7 +2,7 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {FlatList, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {ProgressBar} from 'react-native-paper';
 import {useSelector} from 'react-redux';
 
@@ -10,14 +10,11 @@ import useBhashini from '../../hooks/useBhashini';
 import useNetworkErrorHandling from '../../hooks/useNetworkErrorHandling';
 import useNetworkHandling from '../../hooks/useNetworkHandling';
 import useReadAudio from '../../hooks/useReadAudio';
-import ProductSearchResult from '../../modules/main/provider/components/ProductSearchResult';
-import Store from '../../modules/main/stores/components/Store';
-import {ProductModel} from '../../modules/main/types/Product';
 import {API_BASE_URL, PRODUCT_SEARCH} from '../../utils/apiActions';
 import {BRAND_PRODUCTS_LIMIT} from '../../utils/constants';
-import {searchResultsProviderToStoreModel} from '../../utils/formatter';
 import {useAppTheme} from '../../utils/theme';
 import {compareIgnoringSpaces, showToastWithGravity} from '../../utils/utils';
+import ProductsByStore from './ProductsByStore';
 
 interface SearchProductList {
   searchQuery: string;
@@ -75,7 +72,6 @@ const SearchProducts: React.FC<SearchProductList> = ({searchQuery}) => {
         url,
         productSearchSource.current.token,
       );
-      massageSearchResponse(data);
       setTotalProducts(data.response.count);
       setProducts(data.response.data);
     } catch (error) {
@@ -84,43 +80,6 @@ const SearchProducts: React.FC<SearchProductList> = ({searchQuery}) => {
       setProductsRequested(false);
     }
   };
-  const massageSearchResponse = (data: any) => {
-    const products = data.response.data;
-
-    const providerMap = new Map();
-    products
-      .map((product: any) => {
-        const provider = product.provider_details;
-        provider.location_details = product.location_details;
-        provider.context = product.context;
-        return provider;
-      })
-      .forEach((provider: any) => {
-        // Use provider ID as the key to ensure uniqueness
-        if (!providerMap.has(provider.id)) {
-          providerMap.set(provider.id, provider);
-        }
-      });
-
-    providerMap.forEach((provider: any) => {
-      const providerProducts = products.filter(
-        (product: any) => product.provider_details.id === provider.id,
-      );
-      provider.products = providerProducts;
-    });
-
-    setProviders(Array.from(providerMap.values()));
-
-    // group products by provider
-
-    return products;
-  };
-
-  const renderItem = useCallback(({item}) => {
-    return (
-      <ProductSearchResult product={itemDetailsToProductModel(item)} search />
-    );
-  }, []);
 
   useEffect(() => {
     if (userInput.length > 0) {
@@ -198,72 +157,15 @@ const SearchProducts: React.FC<SearchProductList> = ({searchQuery}) => {
     }, []),
   );
 
-  const itemDetailsToProductModel = (item: any): ProductModel => {
-    const {item_details, context} = item;
-    const {descriptor, quantity} = item_details;
-    const imageUrl =
-      descriptor.symbol.length > 0
-        ? descriptor.symbol
-        : descriptor.images && descriptor.images.length > 0
-        ? descriptor.images[0]
-        : undefined;
-    const measure = quantity?.unitized?.measure;
-    const unitizedValue = measure ? `${measure.value} ${measure.unit}` : '';
-
-    const priceObject = item_details.price;
-    let price = '';
-    let currency = '';
-    if (priceObject) {
-      price = priceObject.value;
-      currency = priceObject.currency;
-    }
-
-    return {
-      id: item_details.id,
-      imageUrl: imageUrl,
-      name: descriptor.name,
-      price,
-      currency,
-      tags: descriptor.tags,
-      unitizedValue,
-      domain: context.domain,
-    };
-  };
-
-  const horizontalProductList = products => {
-    return (
-      <FlatList
-        data={products}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        horizontal
-      />
-    );
-  };
-
-  const storeWithProductsComponent = item => {
-    const store = searchResultsProviderToStoreModel(item.item, searchQuery);
-    return (
-      <View style={styles.container}>
-        <Store store={store} width={32} />
-        {horizontalProductList(item.item.products)}
-      </View>
-    );
-  };
-
   return (
     <View style={styles.container}>
       {userInteractionStarted && (
         <ProgressBar indeterminate color={theme.colors.success600} />
       )}
       {productsRequested ? (
-        <FlatList
-          data={providers}
-          renderItem={storeWithProductsComponent}
-          keyExtractor={item => item.id}
-        />
+        <ProductsByStore products={products} searchQuery={searchQuery} />
       ) : (
-        <FlatList data={providers} renderItem={storeWithProductsComponent} />
+        <ProductsByStore products={products} searchQuery={searchQuery} />
       )}
     </View>
   );
