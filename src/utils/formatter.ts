@@ -25,12 +25,13 @@ export const searchResultsProviderToStoreModel = (
   const {domain} = provider.context;
 
   const category = CATEGORIES.find(item => item.domain === domain);
+  const categories = category ? [category.name] : ['Category Not Available'];
 
   return {
     id,
     iconUrl: provider.descriptor.symbol ?? '',
-    name: provider.descriptor.name ?? '',
-    categories: [category.name],
+    name: provider.descriptor?.name ?? 'Store Name Not Available',
+    categories: categories,
     address,
     brandId: provider.id,
     searchQuery,

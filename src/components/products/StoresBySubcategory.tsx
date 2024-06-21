@@ -4,12 +4,11 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ProgressBar} from 'react-native-paper';
 import {useSelector} from 'react-redux';
-import reactotron from '../../../ReactotronConfig';
 import useNetworkErrorHandling from '../../hooks/useNetworkErrorHandling';
 import useNetworkHandling from '../../hooks/useNetworkHandling';
 import useReadAudio from '../../hooks/useReadAudio';
 import {API_BASE_URL, PRODUCT_SEARCH} from '../../utils/apiActions';
-import {BRAND_PRODUCTS_LIMIT} from '../../utils/constants';
+import {SUBCATEGORY_PRODUCTS_LIMIT} from '../../utils/constants';
 import {useAppTheme} from '../../utils/theme';
 import {
   compareIgnoringSpaces,
@@ -38,7 +37,6 @@ const StoresBySubcategory: React.FC<Products> = ({
   search = false,
   defaultSearchQuery = '',
 }) => {
-  reactotron.log('StoresBySubcategory');
   const voiceDetectionStarted = useRef<boolean>(false);
   const navigation = useNavigation<any>();
   const productSearchSource = useRef<any>(null);
@@ -71,7 +69,7 @@ const StoresBySubcategory: React.FC<Products> = ({
     try {
       setProductsRequested(true);
       productSearchSource.current = CancelToken.source();
-      let url = `${API_BASE_URL}${PRODUCT_SEARCH}?pageNumber=${pageNumber}&limit=${BRAND_PRODUCTS_LIMIT}`;
+      let url = `${API_BASE_URL}${PRODUCT_SEARCH}?pageNumber=${pageNumber}&limit=${SUBCATEGORY_PRODUCTS_LIMIT}`;
       url += selectedProvider ? `&providerIds=${selectedProvider}` : '';
       url += selectedMenu ? `&customMenu=${selectedMenu}` : '';
       url +=

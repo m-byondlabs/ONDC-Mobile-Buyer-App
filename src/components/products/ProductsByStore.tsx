@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
-import reactotron from '../../../ReactotronConfig';
 import ProductSearchResult from '../../modules/main/provider/components/ProductSearchResult';
 import Store from '../../modules/main/stores/components/Store';
 import {ProductModel} from '../../modules/main/types/Product';
@@ -106,7 +105,6 @@ const ProductsByStore = ({
   };
 
   const storeWithProductsComponent = useCallback(item => {
-    reactotron.log(`item ${JSON.stringify(item)}`);
     const store = searchResultsProviderToStoreModel(item.item, searchQuery);
     return (
       <View style={styles.container}>

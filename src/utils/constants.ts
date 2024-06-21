@@ -1,4 +1,5 @@
 export const BRAND_PRODUCTS_LIMIT: number = 10;
+export const SUBCATEGORY_PRODUCTS_LIMIT: number = 100;
 
 export const TAGS: any = {
   non_veg: 'Non-Veg',
