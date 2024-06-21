@@ -1,24 +1,24 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {ActivityIndicator, StyleSheet, View} from 'react-native';
 // @ts-ignore
-import MapplsUIWidgets from 'mappls-search-widgets-react-native';
-import MapplsGL from 'mappls-map-react-native';
-import {Button} from 'react-native-paper';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {Formik} from 'formik';
 import axios from 'axios';
+import {Formik} from 'formik';
+import MapplsGL from 'mappls-map-react-native';
+import MapplsUIWidgets from 'mappls-search-widgets-react-native';
 import {useTranslation} from 'react-i18next';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {Button} from 'react-native-paper';
 
-import {addressTags, validationSchema} from '../../utils/addValidationSchema';
 import InputField from '../../../../../components/input/InputField';
-import {appStyles} from '../../../../../styles/styles';
 import useNetworkHandling from '../../../../../hooks/useNetworkHandling';
+import {appStyles} from '../../../../../styles/styles';
 import {API_BASE_URL, MAP_ACCESS_TOKEN} from '../../../../../utils/apiActions';
+import {addressTags, validationSchema} from '../../utils/addValidationSchema';
 
-import useNetworkErrorHandling from '../../../../../hooks/useNetworkErrorHandling';
 import Config from '../../../../../../config';
-import {useAppTheme} from '../../../../../utils/theme';
 import DropdownField from '../../../../../components/input/DropdownField';
+import useNetworkErrorHandling from '../../../../../hooks/useNetworkErrorHandling';
+import {useAppTheme} from '../../../../../utils/theme';
 
 const defaultLocation = [77.057575, 28.683374];
 
@@ -78,7 +78,7 @@ const AddressForm: React.FC<AddressForm> = ({
         values.lat = mapAddress?.lat?.toFixed(6);
         values.lng = mapAddress?.lng?.toFixed(6);
       }
-      setFormValues(values);
+      setFormValues({...values, fakeId: Date.now()});
     }
   }, [addressInfo, mapAddress]);
 
