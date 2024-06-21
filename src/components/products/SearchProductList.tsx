@@ -87,7 +87,7 @@ const SearchProducts: React.FC<SearchProductList> = ({searchQuery}) => {
   const massageSearchResponse = (data: any) => {
     const products = data.response.data;
 
-    const providerSet = new Set();
+    const providerMap = new Map();
     products
       .map((product: any) => {
         const provider = product.provider_details;
@@ -96,17 +96,20 @@ const SearchProducts: React.FC<SearchProductList> = ({searchQuery}) => {
         return provider;
       })
       .forEach((provider: any) => {
-        providerSet.add(provider);
+        // Use provider ID as the key to ensure uniqueness
+        if (!providerMap.has(provider.id)) {
+          providerMap.set(provider.id, provider);
+        }
       });
 
-    providerSet.forEach((provider: any) => {
+    providerMap.forEach((provider: any) => {
       const providerProducts = products.filter(
         (product: any) => product.provider_details.id === provider.id,
       );
       provider.products = providerProducts;
     });
 
-    setProviders(Array.from(providerSet));
+    setProviders(Array.from(providerMap.values()));
 
     // group products by provider
 
