@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import Page from '../../../components/page/Page';
-import Products from '../../../components/products/Products';
+import StoresBySubcategory from '../../../components/products/StoresBySubcategory';
 import {appStyles} from '../../../styles/styles';
 import SubCategories from './components/SubCategories';
 
@@ -39,7 +39,7 @@ const SubCategoryDetails: React.FC<SubCategoryDetails> = ({
           setCurrentSubCategory={setCurrentSubCategory}
         />
         <ScrollView showsVerticalScrollIndicator={false}>
-          <Products
+          <StoresBySubcategory
             providerId={null}
             customMenu={null}
             subCategories={[currentSubCategory]}
