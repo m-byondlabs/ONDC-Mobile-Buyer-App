@@ -3,41 +3,11 @@ import {StyleSheet, View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import ProductSearchResult from '../../modules/main/provider/components/ProductSearchResult';
 import Store from '../../modules/main/stores/components/Store';
-import {ProductModel} from '../../modules/main/types/Product';
-import {searchResultsProviderToStoreModel} from '../../utils/formatter';
+import {
+  itemDetailsToProductModel,
+  searchResultsProviderToStoreModel,
+} from '../../utils/formatter';
 import {useAppTheme} from '../../utils/theme';
-
-const itemDetailsToProductModel = (item: any): ProductModel => {
-  const {item_details, context} = item;
-  const {descriptor, quantity} = item_details;
-  const imageUrl =
-    descriptor.symbol.length > 0
-      ? descriptor.symbol
-      : descriptor.images && descriptor.images.length > 0
-      ? descriptor.images[0]
-      : undefined;
-  const measure = quantity?.unitized?.measure;
-  const unitizedValue = measure ? `${measure.value} ${measure.unit}` : '';
-
-  const priceObject = item_details.price;
-  let price = '';
-  let currency = '';
-  if (priceObject) {
-    price = priceObject.value;
-    currency = priceObject.currency;
-  }
-
-  return {
-    id: item_details.id,
-    imageUrl: imageUrl,
-    name: descriptor.name,
-    price,
-    currency,
-    tags: descriptor.tags,
-    unitizedValue,
-    domain: context.domain,
-  };
-};
 
 const ProductsByStore = ({
   products,

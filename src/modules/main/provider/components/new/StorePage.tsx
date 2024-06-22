@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import React, {useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import {ScrollView, StyleSheet, View} from 'react-native';
+import {Text} from 'react-native-paper';
 
 import Products from '../../../../../components/products/Products';
-import { useAppTheme } from '../../../../../utils/theme';
+import {useAppTheme} from '../../../../../utils/theme';
 import CustomMenu from '../CustomMenu';
 import StoreSummary from './StoreSummary';
 
