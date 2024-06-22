@@ -3,7 +3,7 @@ import {useTranslation} from 'react-i18next';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import {Text} from 'react-native-paper';
 
-import Products from '../../../../../components/products/Products';
+import StorePageProducts from '../../../../../components/products/new/StorePageProducts';
 import {useAppTheme} from '../../../../../utils/theme';
 import CustomMenu from '../CustomMenu';
 import StoreSummary from './StoreSummary';
@@ -42,7 +42,7 @@ const StoreDetails: React.FC<StoreDetails> = ({
             selectedMenu={selectedMenu}
             setSelectedMenu={setSelectedMenu}
           />
-          <Products
+          <StorePageProducts
             providerId={provider.id}
             customMenu={selectedMenu}
             subCategories={[]}
