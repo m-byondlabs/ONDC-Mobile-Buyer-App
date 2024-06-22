@@ -1,5 +1,5 @@
-import {MD3LightTheme, useTheme} from 'react-native-paper';
 import {Platform} from 'react-native';
+import {MD3LightTheme, useTheme} from 'react-native-paper';
 
 export const theme: any = {
   ...MD3LightTheme,
@@ -14,6 +14,7 @@ export const theme: any = {
     neutral500: '#1D1D1D',
     neutral400: '#1A1A1A',
     neutral300: '#686868',
+    neutral250: '#9C9C9C',
     neutral200: '#B5B5B5',
     neutral100: '#E8E8E8',
     neutral50: '#FAFAFA',

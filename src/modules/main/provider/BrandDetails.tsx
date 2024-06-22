@@ -4,7 +4,6 @@ import axios from 'axios';
 import moment from 'moment';
 import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
-import reactotron from '../../../../ReactotronConfig';
 import Page from '../../../components/page/Page';
 import BrandSkeleton from '../../../components/skeleton/BrandSkeleton';
 import useFormatDate from '../../../hooks/useFormatDate';
@@ -14,7 +13,7 @@ import {API_BASE_URL, PROVIDER, STORE_DETAILS} from '../../../utils/apiActions';
 import {FB_DOMAIN} from '../../../utils/constants';
 import {useAppTheme} from '../../../utils/theme';
 import FBBrandDetails from './components/FBBrandDetails';
-import OtherBrandDetails from './components/OtherBrandDetails';
+import StoreDetails from './components/new/StorePage';
 
 const CancelToken = axios.CancelToken;
 
@@ -32,7 +31,6 @@ const BrandDetails = ({route: {params}}: {route: any}) => {
     useState<boolean>(true);
   const {getDataWithAuth} = useNetworkHandling();
   const {handleApiError} = useNetworkErrorHandling();
-
 
   const getOutletDetails = async () => {
     try {
@@ -112,7 +110,7 @@ const BrandDetails = ({route: {params}}: {route: any}) => {
             apiRequested={apiRequested || outletDetailsRequested}
           />
         ) : (
-          <OtherBrandDetails
+          <StoreDetails
             provider={provider}
             outlet={outlet}
             apiRequested={apiRequested || outletDetailsRequested}
