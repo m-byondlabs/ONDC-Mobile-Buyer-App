@@ -165,6 +165,39 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
     }, []),
   );
 
+  const groupProductsByCategory = (products: any[]) => {
+    const groupedProducts: any = {};
+    products.forEach(item => {
+      const product = item?.item_details;
+      const provider = item?.provider_details;
+      const tags = provider.tags;
+      let category = null;
+      // iterate over the tags and find the category_id
+      tags.forEach(tag => {
+        if (tag.code === 'serviceability') {
+          const tagList = tag.list;
+          tagList.forEach(tag => {
+            if (tag.code === 'category') {
+              category = tag.value;
+            }
+          });
+        }
+      });
+      if (!category) {
+        return;
+      }
+      if (!groupedProducts[category]) {
+        groupedProducts[category] = [];
+      }
+
+      // remove the category_id from the product object
+      groupedProducts[category].push(product.descriptor.name);
+    });
+    return groupedProducts;
+  };
+
+  reactotron.debug(groupProductsByCategory(filteredProducts));
+
   return (
     <View style={styles.container}>
       {userInteractionStarted && (
