@@ -2,6 +2,7 @@ import React, {useCallback} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {Text} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import Product from '../../../modules/main/provider/components/Product';
 import {ProductModel} from '../../../modules/main/types/Product';
 import {useAppTheme} from '../../../utils/theme';
@@ -28,8 +29,16 @@ const SubcategoryHeader = ({subcategory}: {subcategory: SubcategoryModel}) => {
 
   return (
     <View style={styles.subcategoryContainer}>
-      <BorderImage source={iconSource()} dimension={36} />
-      <Text variant={'titleLarge'}>{subcategory.name}</Text>
+      <View style={styles.subcategoryName}>
+        <BorderImage source={iconSource()} dimension={36} />
+        <Text variant={'titleLarge'}>{subcategory.name}</Text>
+      </View>
+      <Icon
+        style={styles.cheveron}
+        name={'chevron-right'}
+        size={28}
+        color={theme.colors.primary}
+      />
     </View>
   );
 };
@@ -63,6 +72,7 @@ const ProductsBySubCategory = ({
     <View style={styles.container}>
       <SubcategoryHeader subcategory={subcategory} />
       {horizontalProductList(products)}
+      <View style={styles.divider} />
     </View>
   );
 };
@@ -83,7 +93,22 @@ const makeStyles = (colors: any) =>
     subcategoryContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingVertical: 16,
+      paddingTop: 8,
+      paddingBottom: 16,
+      justifyContent: 'space-between',
+    },
+    divider: {
+      height: 2,
+      backgroundColor: colors.neutral100,
+      marginVertical: 4,
+    },
+    subcategoryName: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    cheveron: {
+      color: colors.primary,
+      paddingHorizontal: 16,
     },
   });
 
