@@ -63,8 +63,8 @@ const StoreDetails: React.FC<StoreDetails> = ({
 const makeStyles = (colors: any) =>
   StyleSheet.create({
     divider: {
-      height: 1,
-      backgroundColor: colors.neutral200,
+      height: 5,
+      backgroundColor: colors.neutral100,
       marginVertical: 8,
     },
     container: {

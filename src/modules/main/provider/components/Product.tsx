@@ -67,7 +67,7 @@ const makeStyles = (colors: any) =>
     container: {
       paddingHorizontal: 8,
       flex: 1,
-      marginBottom: 20,
+      marginBottom: 8,
       width: 130,
     },
     gridImage: {
@@ -100,6 +100,7 @@ const makeStyles = (colors: any) =>
       paddingRight: 12,
     },
     button: {
+      marginTop: 8,
       paddingHorizontal: 8,
       paddingVertical: 4,
       borderColor: colors.neutral300, // Bootstrap primary color for example

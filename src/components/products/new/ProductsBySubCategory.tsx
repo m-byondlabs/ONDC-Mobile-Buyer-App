@@ -10,7 +10,7 @@ import {BorderImage} from '../../image/BorderImage';
 export type SubcategoryModel = {
   id: string;
   name: string;
-  iconUrl?: string;
+  iconUrl?: string | number;
 };
 
 const NoImageAvailable = require('../../../assets/noImage.png');
@@ -18,15 +18,17 @@ const NoImageAvailable = require('../../../assets/noImage.png');
 const SubcategoryHeader = ({subcategory}: {subcategory: SubcategoryModel}) => {
   const theme = useAppTheme();
   const styles = makeStyles(theme.colors);
+  const iconSource = () => {
+    // if iconUrl is a number, it is a local image
+    if (typeof subcategory.iconUrl === 'number') {
+      return subcategory.iconUrl;
+    }
+    return subcategory.iconUrl ? {uri: subcategory.iconUrl} : NoImageAvailable;
+  };
 
   return (
     <View style={styles.subcategoryContainer}>
-      <BorderImage
-        source={
-          subcategory.iconUrl ? {uri: subcategory.iconUrl} : NoImageAvailable
-        }
-        dimension={64}
-      />
+      <BorderImage source={iconSource()} dimension={36} />
       <Text variant={'titleLarge'}>{subcategory.name}</Text>
     </View>
   );
@@ -76,6 +78,7 @@ const makeStyles = (colors: any) =>
     },
     listContainer: {
       paddingHorizontal: 8,
+      flex: 1,
     },
     subcategoryContainer: {
       flexDirection: 'row',

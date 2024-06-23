@@ -11,6 +11,7 @@ import useNetworkHandling from '../../../hooks/useNetworkHandling';
 import useReadAudio from '../../../hooks/useReadAudio';
 import {ProductModel} from '../../../modules/main/types/Product';
 import {API_BASE_URL, PRODUCT_SEARCH} from '../../../utils/apiActions';
+import {PRODUCT_SUBCATEGORY} from '../../../utils/categories';
 import {BRAND_PRODUCTS_LIMIT} from '../../../utils/constants';
 import {itemDetailsToProductModel} from '../../../utils/formatter';
 import {useAppTheme} from '../../../utils/theme';
@@ -171,6 +172,25 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
     products: ProductModel[];
   };
 
+  const subcategoryIcon = (subcategory: string): number => {
+    const NO_IMAGE = require('../../../assets/noImage.png');
+
+    const allCatgories = Object.keys(PRODUCT_SUBCATEGORY);
+    let iconUrl = NO_IMAGE;
+    allCatgories.forEach(category => {
+      const subCategoryList: any[] = PRODUCT_SUBCATEGORY[category];
+      const foundSubCategory = subCategoryList.find(
+        item => item.value === subcategory,
+      );
+      if (foundSubCategory) {
+        iconUrl = foundSubCategory.imageUrl;
+        // break out of the loop
+        return;
+      }
+    });
+    return iconUrl;
+  };
+
   const groupProductsByCategory = (
     productsList: any[],
   ): ProductsBySubCategory[] => {
@@ -193,6 +213,7 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
       const subcategory: SubcategoryModel = {
         id: key,
         name: key,
+        iconUrl: subcategoryIcon(key),
       };
 
       const produceModels: ProductModel[] = groupedProducts[key].map(
