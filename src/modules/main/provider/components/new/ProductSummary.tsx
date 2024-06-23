@@ -36,6 +36,15 @@ const ProductSummary = ({product}: {product: ProductModel}) => {
           {product.unitizedValue}
         </Text>
       )}
+      {product.moreOptions && (
+        <Text
+          variant={'labelSmall'}
+          numberOfLines={1}
+          ellipsizeMode={'tail'}
+          style={styles.moreOptions}>
+          + more options
+        </Text>
+      )}
       <View style={styles.row}>
         <Text variant={'bodyLarge'} style={styles.amount}>
           {CURRENCY_SYMBOLS[product.currency]}
@@ -67,6 +76,10 @@ const makeStyles = (colors: any) =>
     row: {
       flexDirection: 'row',
       justifyContent: 'space-between',
+    },
+    moreOptions: {
+      color: colors.success600,
+      marginBottom: 8,
     },
     vegNonVegContainer: {
       flexDirection: 'row',

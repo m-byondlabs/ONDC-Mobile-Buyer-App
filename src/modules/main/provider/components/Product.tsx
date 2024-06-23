@@ -1,3 +1,5 @@
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
 import React from 'react';
 import {StyleSheet, TouchableOpacity} from 'react-native';
 import {BorderImage} from '../../../../components/image/BorderImage';
@@ -16,7 +18,7 @@ const Product: React.FC<Product> = ({product, search = false}) => {
   //const {formatNumber} = useFormatNumber();
   const theme = useAppTheme();
   const styles = makeStyles(theme.colors);
-  //const navigation = useNavigation<StackNavigationProp<any>>();
+  const navigation = useNavigation<StackNavigationProp<any>>();
 
   const navigateToProductDetails = () => {
     // TODO
@@ -32,6 +34,7 @@ const Product: React.FC<Product> = ({product, search = false}) => {
     } else {
       navigation.navigate('ProductDetails', {productId: product.id});
     }*/
+    navigation.navigate('ProductDetails', {productId: product.id});
   };
 
   return (

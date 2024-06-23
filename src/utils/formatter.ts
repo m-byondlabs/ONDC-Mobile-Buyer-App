@@ -59,8 +59,10 @@ export const itemDetailsToProductModel = (item: any): ProductModel => {
     currency = priceObject.currency;
   }
 
+  const moreOptions = item_details.parent_item_id ? true : false;
+
   return {
-    id: item_details.id,
+    id: item.id,
     imageUrl: imageUrl,
     name: descriptor.name,
     price,
@@ -68,5 +70,6 @@ export const itemDetailsToProductModel = (item: any): ProductModel => {
     tags: descriptor.tags,
     unitizedValue,
     domain: context.domain,
+    moreOptions,
   };
 };

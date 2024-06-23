@@ -47,7 +47,14 @@ const ProductsBySubCategory = ({
   }, []);
 
   const horizontalProductList = (productsList: ProductModel[]) => {
-    return <FlatList data={productsList} renderItem={renderItem} horizontal />;
+    return (
+      <FlatList
+        data={productsList}
+        renderItem={renderItem}
+        horizontal
+        keyExtractor={item => item.id}
+      />
+    );
   };
 
   return (

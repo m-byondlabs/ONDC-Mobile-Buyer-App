@@ -8,4 +8,5 @@ export type ProductModel = {
   search?: boolean;
   domain: string;
   tags: string[];
+  moreOptions?: boolean;
 };
