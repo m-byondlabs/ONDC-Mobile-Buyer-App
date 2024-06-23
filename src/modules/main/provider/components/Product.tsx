@@ -68,6 +68,7 @@ const makeStyles = (colors: any) =>
       paddingHorizontal: 8,
       flex: 1,
       marginBottom: 8,
+      marginRight: 16,
       width: 130,
     },
     gridImage: {
