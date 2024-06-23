@@ -66,7 +66,7 @@ const ProductSearchResult: React.FC<Product> = (productModel: Product) => {
   const navigation = useNavigation<StackNavigationProp<any>>();
 
   const navigateToProductDetails = () => {
-    if (search) {
+    /*if (search) { // TODO fix the navigation
       const routeParams: any = {
         brandId: product.id,
       };
@@ -74,6 +74,8 @@ const ProductSearchResult: React.FC<Product> = (productModel: Product) => {
     } else {
       navigation.navigate('ProductDetails', {productId: product.id});
     }
+      */
+    navigation.navigate('ProductDetails', {productId: product.id});
   };
 
   return (
