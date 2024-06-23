@@ -4,14 +4,15 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ProgressBar} from 'react-native-paper';
 import {useSelector} from 'react-redux';
-import reactotron from '../../../../ReactotronConfig';
 
+import {FlatList} from 'react-native-gesture-handler';
 import useNetworkErrorHandling from '../../../hooks/useNetworkErrorHandling';
 import useNetworkHandling from '../../../hooks/useNetworkHandling';
 import useReadAudio from '../../../hooks/useReadAudio';
-import Product from '../../../modules/main/provider/components/Product';
+import {ProductModel} from '../../../modules/main/types/Product';
 import {API_BASE_URL, PRODUCT_SEARCH} from '../../../utils/apiActions';
 import {BRAND_PRODUCTS_LIMIT} from '../../../utils/constants';
+import {itemDetailsToProductModel} from '../../../utils/formatter';
 import {useAppTheme} from '../../../utils/theme';
 import {
   compareIgnoringSpaces,
@@ -21,6 +22,7 @@ import {
 import ProductSkeleton from '../../skeleton/ProductSkeleton';
 import Filters from '../Filters';
 import ProductSearch from '../ProductSearch';
+import ProductsBySubCategory, {SubcategoryModel} from './ProductsBySubCategory';
 
 interface StorePageProducts {
   providerId: any;
@@ -39,8 +41,6 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
   search = false,
   defaultSearchQuery = '',
 }) => {
-  reactotron.debug('StorePageProducts');
-
   const voiceDetectionStarted = useRef<boolean>(false);
   const navigation = useNavigation<any>();
   const productSearchSource = useRef<any>(null);
@@ -72,6 +72,7 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
   ) => {
     try {
       setProductsRequested(true);
+
       productSearchSource.current = CancelToken.source();
       let url = `${API_BASE_URL}${PRODUCT_SEARCH}?pageNumber=${pageNumber}&limit=${BRAND_PRODUCTS_LIMIT}`;
       url += selectedProvider ? `&providerIds=${selectedProvider}` : '';
@@ -165,38 +166,47 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
     }, []),
   );
 
-  const groupProductsByCategory = (products: any[]) => {
-    const groupedProducts: any = {};
-    products.forEach(item => {
-      const product = item?.item_details;
-      const provider = item?.provider_details;
-      const tags = provider.tags;
-      let category = null;
-      // iterate over the tags and find the category_id
-      tags.forEach(tag => {
-        if (tag.code === 'serviceability') {
-          const tagList = tag.list;
-          tagList.forEach(tag => {
-            if (tag.code === 'category') {
-              category = tag.value;
-            }
-          });
-        }
-      });
-      if (!category) {
-        return;
-      }
-      if (!groupedProducts[category]) {
-        groupedProducts[category] = [];
-      }
-
-      // remove the category_id from the product object
-      groupedProducts[category].push(product.descriptor.name);
-    });
-    return groupedProducts;
+  type ProductsBySubCategory = {
+    subcategory: SubcategoryModel;
+    products: ProductModel[];
   };
 
-  reactotron.debug(groupProductsByCategory(filteredProducts));
+  const groupProductsByCategory = (
+    productsList: any[],
+  ): ProductsBySubCategory[] => {
+    const groupedProducts: any = {};
+    productsList.forEach(item => {
+      const product = item?.item_details;
+      const categoryId = product?.category_id || 'No Category';
+      if (!groupedProducts[categoryId]) {
+        groupedProducts[categoryId] = [];
+      }
+      groupedProducts[categoryId].push(item);
+    });
+
+    // iterate over all the keys in the object
+
+    const productsByCategory: ProductsBySubCategory[] = [];
+
+    // get all the keys in the object
+    Object.keys(groupedProducts).forEach((key: any) => {
+      const subcategory: SubcategoryModel = {
+        id: key,
+        name: key,
+      };
+
+      const produceModels: ProductModel[] = groupedProducts[key].map(
+        (item: any) => {
+          const model = itemDetailsToProductModel(item);
+          return model;
+        },
+      );
+
+      productsByCategory.push({subcategory, products: produceModels});
+    });
+
+    return productsByCategory;
+  };
 
   return (
     <View style={styles.container}>
@@ -225,13 +235,17 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
           ))}
         </View>
       ) : (
-        <View style={styles.listContainer}>
-          {filteredProducts.map(product => (
-            <View key={product.id} style={styles.productContainer}>
-              <Product product={product} search={search} />
-            </View>
-          ))}
-        </View>
+        <FlatList
+          data={groupProductsByCategory(filteredProducts)}
+          renderItem={({item}) => (
+            <ProductsBySubCategory
+              products={item.products}
+              subcategory={item.subcategory}
+            />
+          )}
+          keyExtractor={item => item.subcategory.id}
+          horizontal={false}
+        />
       )}
     </View>
   );

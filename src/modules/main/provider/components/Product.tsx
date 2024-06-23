@@ -1,30 +1,26 @@
-import {useNavigation} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
 import React from 'react';
 import {StyleSheet, TouchableOpacity} from 'react-native';
 import {BorderImage} from '../../../../components/image/BorderImage';
-import useFormatNumber from '../../../../hooks/useFormatNumber';
-import {FB_DOMAIN} from '../../../../utils/constants';
-import {itemDetailsToProductModel} from '../../../../utils/formatter';
 import {useAppTheme} from '../../../../utils/theme';
+import {ProductModel} from '../../types/Product';
 import ProductSummary from './new/ProductSummary';
 
 interface Product {
-  product: any;
+  product: ProductModel;
   search?: boolean;
 }
 
 const NoImageAvailable = require('../../../../assets/noImage.png');
 
 const Product: React.FC<Product> = ({product, search = false}) => {
-  const {formatNumber} = useFormatNumber();
-  const isFBDomain = product.context.domain === FB_DOMAIN;
+  //const {formatNumber} = useFormatNumber();
   const theme = useAppTheme();
   const styles = makeStyles(theme.colors);
-  const navigation = useNavigation<StackNavigationProp<any>>();
+  //const navigation = useNavigation<StackNavigationProp<any>>();
 
   const navigateToProductDetails = () => {
-    if (search) {
+    // TODO
+    /*if (search) {
       const routeParams: any = {
         brandId: product.provider_details.id,
       };
@@ -35,7 +31,7 @@ const Product: React.FC<Product> = ({product, search = false}) => {
       navigation.navigate('BrandDetails', routeParams);
     } else {
       navigation.navigate('ProductDetails', {productId: product.id});
-    }
+    }*/
   };
 
   return (
@@ -43,14 +39,10 @@ const Product: React.FC<Product> = ({product, search = false}) => {
       style={styles.container}
       onPress={navigateToProductDetails}>
       <BorderImage
-        source={
-          product?.item_details?.descriptor?.symbol
-            ? {uri: product?.item_details?.descriptor?.symbol}
-            : NoImageAvailable
-        }
+        source={product.imageUrl ? {uri: product.imageUrl} : NoImageAvailable}
         dimension={120}
       />
-      <ProductSummary product={itemDetailsToProductModel(product)} />
+      <ProductSummary product={product} />
     </TouchableOpacity>
   );
 };
