@@ -113,6 +113,61 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
     );
   }, [products, searchQuery]);
 
+  const subcategoryIcon = (subcategory: string): number => {
+    const NO_IMAGE = require('../../../assets/noImage.png');
+
+    const allCatgories = Object.keys(PRODUCT_SUBCATEGORY);
+    let iconUrl = NO_IMAGE;
+    allCatgories.forEach(category => {
+      const subCategoryList: any[] = PRODUCT_SUBCATEGORY[category];
+      const foundSubCategory = subCategoryList.find(
+        item => item.value === subcategory,
+      );
+      if (foundSubCategory) {
+        iconUrl = foundSubCategory.imageUrl;
+        // break out of the loop
+        return;
+      }
+    });
+    return iconUrl;
+  };
+
+  const productsGroupedByCategory = useMemo(() => {
+    const groupedProducts: any = {};
+    filteredProducts.forEach(item => {
+      const product = item?.item_details;
+      const categoryId = product?.category_id || 'No Category';
+      if (!groupedProducts[categoryId]) {
+        groupedProducts[categoryId] = [];
+      }
+      groupedProducts[categoryId].push(item);
+    });
+
+    // iterate over all the keys in the object
+
+    const productsByCategory: ProductsBySubCategory[] = [];
+
+    // get all the keys in the object
+    Object.keys(groupedProducts).forEach((key: any) => {
+      const subcategory: SubcategoryModel = {
+        id: key,
+        name: key,
+        iconUrl: subcategoryIcon(key),
+      };
+
+      const produceModels: ProductModel[] = groupedProducts[key].map(
+        (item: any) => {
+          const model = itemDetailsToProductModel(item);
+          return model;
+        },
+      );
+
+      productsByCategory.push({subcategory, products: produceModels});
+    });
+
+    return productsByCategory;
+  }, [filteredProducts]);
+
   useEffect(() => {
     searchProducts(
       page,
@@ -172,63 +227,6 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
     products: ProductModel[];
   };
 
-  const subcategoryIcon = (subcategory: string): number => {
-    const NO_IMAGE = require('../../../assets/noImage.png');
-
-    const allCatgories = Object.keys(PRODUCT_SUBCATEGORY);
-    let iconUrl = NO_IMAGE;
-    allCatgories.forEach(category => {
-      const subCategoryList: any[] = PRODUCT_SUBCATEGORY[category];
-      const foundSubCategory = subCategoryList.find(
-        item => item.value === subcategory,
-      );
-      if (foundSubCategory) {
-        iconUrl = foundSubCategory.imageUrl;
-        // break out of the loop
-        return;
-      }
-    });
-    return iconUrl;
-  };
-
-  const groupProductsByCategory = (
-    productsList: any[],
-  ): ProductsBySubCategory[] => {
-    const groupedProducts: any = {};
-    productsList.forEach(item => {
-      const product = item?.item_details;
-      const categoryId = product?.category_id || 'No Category';
-      if (!groupedProducts[categoryId]) {
-        groupedProducts[categoryId] = [];
-      }
-      groupedProducts[categoryId].push(item);
-    });
-
-    // iterate over all the keys in the object
-
-    const productsByCategory: ProductsBySubCategory[] = [];
-
-    // get all the keys in the object
-    Object.keys(groupedProducts).forEach((key: any) => {
-      const subcategory: SubcategoryModel = {
-        id: key,
-        name: key,
-        iconUrl: subcategoryIcon(key),
-      };
-
-      const produceModels: ProductModel[] = groupedProducts[key].map(
-        (item: any) => {
-          const model = itemDetailsToProductModel(item);
-          return model;
-        },
-      );
-
-      productsByCategory.push({subcategory, products: produceModels});
-    });
-
-    return productsByCategory;
-  };
-
   return (
     <View style={styles.container}>
       {userInteractionStarted && (
@@ -257,7 +255,7 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
         </View>
       ) : (
         <FlatList
-          data={groupProductsByCategory(filteredProducts)}
+          data={productsGroupedByCategory}
           renderItem={({item}) => (
             <ProductsBySubCategory
               products={item.products}
