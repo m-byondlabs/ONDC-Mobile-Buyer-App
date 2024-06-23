@@ -19,10 +19,10 @@ export const theme: any = {
     neutral100: '#E8E8E8',
     neutral50: '#FAFAFA',
 
-    primary: '#008ECC',
-    primary300: '#023259',
-    primary200: '#06477D',
-    primary50: '#ECF3F8',
+    primary: '#4D9D98',
+    primary300: '#63aeaa',
+    primary200: '#8bc5c3',
+    primary50: '#e2f0f0',
 
     success600: '#419E6A',
     success400: '#A5E1BF',
