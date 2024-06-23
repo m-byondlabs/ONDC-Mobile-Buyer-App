@@ -1,5 +1,7 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
 import axios from 'axios';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {
   ActivityIndicator,
   ScrollView,
@@ -10,35 +12,33 @@ import {
 import {ProgressBar, Text} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useDispatch, useSelector} from 'react-redux';
-import {useTranslation} from 'react-i18next';
-import {useFocusEffect} from '@react-navigation/native';
 
-import {API_BASE_URL, CART, ITEM_DETAILS} from '../../../../utils/apiActions';
-import useNetworkHandling from '../../../../hooks/useNetworkHandling';
+import Page from '../../../../components/page/Page';
+import VariationsRenderer from '../../../../components/products/VariationsRenderer';
+import VegNonVegTag from '../../../../components/products/VegNonVegTag';
+import useFormatNumber from '../../../../hooks/useFormatNumber';
 import useNetworkErrorHandling from '../../../../hooks/useNetworkErrorHandling';
-import ProductSkeleton from './components/ProductSkeleton';
-import ProductImages from './components/ProductImages';
+import useNetworkHandling from '../../../../hooks/useNetworkHandling';
+import useReadAudio from '../../../../hooks/useReadAudio';
+import userUpdateCartItem from '../../../../hooks/userUpdateCartItem';
+import {updateCartItems} from '../../../../redux/cart/actions';
+import {makeGlobalStyles} from '../../../../styles/styles';
+import {API_BASE_URL, CART, ITEM_DETAILS} from '../../../../utils/apiActions';
 import {
   FASHION_DOMAIN,
   FB_DOMAIN,
   GROCERY_DOMAIN,
   numberWords,
 } from '../../../../utils/constants';
-import VegNonVegTag from '../../../../components/products/VegNonVegTag';
-import VariationsRenderer from '../../../../components/products/VariationsRenderer';
-import FBProductCustomization from '../../provider/components/FBProductCustomization';
-import userUpdateCartItem from '../../../../hooks/userUpdateCartItem';
+import {useAppTheme} from '../../../../utils/theme';
 import {
   compareIgnoringSpaces,
   showToastWithGravity,
 } from '../../../../utils/utils';
-import {makeGlobalStyles} from '../../../../styles/styles';
-import {updateCartItems} from '../../../../redux/cart/actions';
-import Page from '../../../../components/page/Page';
+import FBProductCustomization from '../../provider/components/FBProductCustomization';
 import AboutProduct from './components/AboutProduct';
-import {useAppTheme} from '../../../../utils/theme';
-import useReadAudio from '../../../../hooks/useReadAudio';
-import useFormatNumber from '../../../../hooks/useFormatNumber';
+import ProductImages from './components/ProductImages';
+import ProductSkeleton from './components/ProductSkeleton';
 
 interface ProductDetails {
   route: any;
@@ -662,15 +662,16 @@ const makeStyles = (colors: any) =>
     },
     addToCartButton: {
       flex: 1,
-      borderRadius: 8,
-      borderWidth: 1,
+      borderRadius: 24,
+      borderWidth: 2,
       alignItems: 'center',
       justifyContent: 'center',
-      height: 44,
-      backgroundColor: colors.primary,
+      marginHorizontal: 16,
+      height: 48,
+      backgroundColor: 'transparent',
     },
     addToCartLabel: {
-      color: colors.white,
+      color: colors.primary,
     },
     buttonGroup: {
       backgroundColor: colors.primary50,
