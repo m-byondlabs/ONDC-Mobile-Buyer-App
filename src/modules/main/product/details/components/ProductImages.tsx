@@ -1,7 +1,7 @@
-import PagerView from 'react-native-pager-view';
-import FastImage from 'react-native-fast-image';
-import {StyleSheet, View} from 'react-native';
 import React, {useState} from 'react';
+import {StyleSheet, View} from 'react-native';
+import PagerView from 'react-native-pager-view';
+import {BorderImage} from '../../../../../components/image/BorderImage';
 import {useAppTheme} from '../../../../../utils/theme';
 
 interface ProductImages {
@@ -26,19 +26,10 @@ const ProductImages: React.FC<ProductImages> = ({
         onPageSelected={({nativeEvent: {position}}) =>
           setSelectedMediaPosition(position)
         }
-        style={[styles.pager, fbProduct ? styles.fbImage : styles.otherImage]}
+        style={styles.pager}
         initialPage={0}>
         {images?.map((uri, index) => (
-          <FastImage
-            key={`${index}image`}
-            source={{uri}}
-            style={[
-              styles.image,
-              fbProduct ? styles.fbImage : styles.otherImage,
-              roundedCorner ? styles.roundedCorner : {},
-            ]}
-            resizeMode={'contain'}
-          />
+          <BorderImage key={`${index}image`} source={{uri}} dimension={350} />
         ))}
       </PagerView>
       <View style={styles.pageIndicator}>
@@ -65,6 +56,9 @@ const makeStyles = (colors: any) =>
     pagerContainer: {backgroundColor: 'white', paddingBottom: 8},
     pager: {
       zIndex: 999,
+      alignItems: 'center',
+      justifyContent: 'center',
+      flex: 1,
     },
     fbImage: {
       height: 220,
