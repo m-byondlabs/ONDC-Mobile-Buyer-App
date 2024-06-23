@@ -1,8 +1,9 @@
+import React from 'react';
+import {useTranslation} from 'react-i18next';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {TextInput} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useAppTheme} from '../../utils/theme';
-import {useTranslation} from 'react-i18next';
 
 const ProductSearch = ({
   searchQuery,
@@ -27,9 +28,8 @@ const ProductSearch = ({
         onChangeText={text => setSearchQuery(text)}
         value={searchQuery}
         textColor={theme.colors.neutral400}
-        outlineColor={theme.colors.neutral100}
-        activeUnderlineColor={theme.colors.neutral100}
-        underlineColor={theme.colors.neutral100}
+        outlineColor="transparent"
+        activeOutlineColor="transparent"
       />
       {searchQuery.length === 0 ? (
         <></>
@@ -47,9 +47,10 @@ const makeStyles = (colors: any) =>
     container: {
       flexDirection: 'row',
       borderRadius: 60,
-      backgroundColor: colors.neutral100,
       padding: 10,
       height: 40,
+      borderColor: colors.neutral200,
+      borderWidth: 1,
     },
     inputContainer: {
       marginLeft: 6,
@@ -61,7 +62,7 @@ const makeStyles = (colors: any) =>
     },
     input: {
       height: 20,
-      backgroundColor: colors.neutral100,
+      borderWidth: 0,
     },
   });
 

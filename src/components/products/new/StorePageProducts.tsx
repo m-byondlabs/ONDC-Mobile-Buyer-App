@@ -282,7 +282,7 @@ const makeStyles = (colors: any) =>
       marginBottom: 12,
     },
     searchContainer: {
-      marginTop: 24,
+      marginVertical: 8,
       paddingHorizontal: 16,
     },
     searchBar: {
