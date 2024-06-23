@@ -2,6 +2,7 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import React from 'react';
 import {StyleSheet, TouchableOpacity} from 'react-native';
+import {Text} from 'react-native-paper';
 import {BorderImage} from '../../../../components/image/BorderImage';
 import {useAppTheme} from '../../../../utils/theme';
 import {ProductModel} from '../../types/Product';
@@ -13,6 +14,16 @@ interface Product {
 }
 
 const NoImageAvailable = require('../../../../assets/noImage.png');
+
+const AddToCartButton = ({onPress}) => {
+  const theme = useAppTheme();
+  const styles = makeStyles(theme.colors);
+  return (
+    <TouchableOpacity style={styles.button} onPress={onPress}>
+      <Text style={styles.text}>Add</Text>
+    </TouchableOpacity>
+  );
+};
 
 const Product: React.FC<Product> = ({product, search = false}) => {
   //const {formatNumber} = useFormatNumber();
@@ -46,6 +57,7 @@ const Product: React.FC<Product> = ({product, search = false}) => {
         dimension={120}
       />
       <ProductSummary product={product} />
+      <AddToCartButton onPress={navigateToProductDetails} />
     </TouchableOpacity>
   );
 };
@@ -86,6 +98,19 @@ const makeStyles = (colors: any) =>
       width: '100%',
       paddingTop: 12,
       paddingRight: 12,
+    },
+    button: {
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderColor: colors.neutral300, // Bootstrap primary color for example
+      borderWidth: 1,
+      borderRadius: 16,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    text: {
+      color: colors.success600,
+      fontSize: 16,
     },
   });
 
