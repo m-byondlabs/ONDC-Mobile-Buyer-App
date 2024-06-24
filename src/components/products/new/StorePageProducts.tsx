@@ -1,11 +1,13 @@
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {View} from 'react-native';
 import {Button, ProgressBar} from 'react-native-paper';
 import {useSelector} from 'react-redux';
 
+import {StyleSheet} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
+import reactotron from '../../../../ReactotronConfig';
 import useNetworkErrorHandling from '../../../hooks/useNetworkErrorHandling';
 import useNetworkHandling from '../../../hooks/useNetworkHandling';
 import useReadAudio from '../../../hooks/useReadAudio';
@@ -31,6 +33,8 @@ interface StorePageProducts {
   subCategories: any[];
   search?: boolean;
   defaultSearchQuery?: string;
+  onCategoriesFilterSelected?: (categories: any[]) => void;
+  subcategoryIndex: number;
 }
 
 const CancelToken = axios.CancelToken;
@@ -41,6 +45,8 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
   subCategories = [],
   search = false,
   defaultSearchQuery = '',
+  onCategoriesFilterSelected,
+  subcategoryIndex = 0,
 }) => {
   const voiceDetectionStarted = useRef<boolean>(false);
   const navigation = useNavigation<any>();
@@ -63,6 +69,7 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
   const [selectedAttributes, setSelectedAttributes] = useState<any>({});
   const {getDataWithAuth} = useNetworkHandling();
   const {handleApiError} = useNetworkErrorHandling();
+  let subcategoryListRef = useRef<any>(null);
 
   const searchProducts = async (
     pageNumber: number,
@@ -132,6 +139,24 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
     return iconUrl;
   };
 
+  useEffect(() => {
+    reactotron.log('subcategoryIndex scroll to ', subcategoryIndex);
+
+    // scroll to the selected subcategory after the products are loaded
+
+    setTimeout(() => {
+      subcategoryListRef.current?.scrollToIndex({
+        index: subcategoryIndex,
+        animated: true,
+      });
+    }, 500);
+
+    subcategoryListRef.current?.scrollToIndex({
+      index: subcategoryIndex,
+      animated: true,
+    });
+  }, [subcategoryIndex]);
+
   const productsGroupedByCategory = useMemo(() => {
     const groupedProducts: any = {};
     filteredProducts.forEach(item => {
@@ -179,7 +204,7 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
       voiceDetectionStarted.current = true;
       startVoice().then(() => {});
     });
-  }, [page, providerId, customMenu, subCategories, selectedAttributes]);
+  }, [page, providerId, customMenu, selectedAttributes]);
 
   useEffect(() => {
     if (userInput.length > 0) {
@@ -212,15 +237,7 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
         });
       }
     }
-  }, [userInput, products]);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (voiceDetectionStarted.current) {
-        setAllowRestarts();
-      }
-    }, []),
-  );
+  }, [userInput, navigation, products, stopAndDestroyVoiceListener]);
 
   type ProductsBySubCategory = {
     subcategory: SubcategoryModel;
@@ -247,7 +264,10 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
         <Button
           icon="filter"
           mode="contained"
-          onPress={() => navigation.navigate('Filters')}>
+          onPress={() => {
+            onCategoriesFilterSelected &&
+              onCategoriesFilterSelected(productsGroupedByCategory);
+          }}>
           Categories
         </Button>
       </View>
@@ -262,6 +282,8 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
         </View>
       ) : (
         <FlatList
+          style={{flex: 1}}
+          ref={subcategoryListRef}
           data={productsGroupedByCategory}
           renderItem={({item}) => (
             <ProductsBySubCategory
@@ -271,6 +293,11 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
           )}
           keyExtractor={item => item.subcategory.id}
           horizontal={false}
+          getItemLayout={(data, index) => ({
+            length: 340,
+            offset: 340 * index,
+            index,
+          })}
         />
       )}
     </View>
@@ -282,6 +309,14 @@ const makeStyles = (colors: any) =>
     container: {
       flex: 1,
       backgroundColor: colors.white,
+    },
+    sheetContainer: {
+      padding: 10,
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 10,
     },
     productContainer: {
       width: '50%',

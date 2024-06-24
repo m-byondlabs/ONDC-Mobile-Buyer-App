@@ -85,6 +85,7 @@ const makeStyles = (colors: any) =>
       paddingVertical: 0,
       paddingHorizontal: 8,
       width: '100%',
+      height: 340,
     },
     listContainer: {
       paddingHorizontal: 8,

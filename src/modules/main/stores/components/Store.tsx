@@ -3,7 +3,7 @@ import React from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Text} from 'react-native-paper';
 
-import reactotron from '../../../../../ReactotronConfig';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {BorderImage} from '../../../../components/image/BorderImage';
 import {useAppTheme} from '../../../../utils/theme';
 
@@ -59,11 +59,14 @@ const Store = ({store, width = 96}: {store: StoreModel; width: number}) => {
     <TouchableOpacity
       style={styles.container}
       onPress={() => navigateToDetails()}>
-      <BorderImage
-        dimension={width}
-        source={store.iconUrl ? {uri: store.iconUrl} : NoImageAvailable}
-      />
-      <StoreSummary store={store} />
+      <View style={styles.summaryContainer}>
+        <BorderImage
+          dimension={width}
+          source={store.iconUrl ? {uri: store.iconUrl} : NoImageAvailable}
+        />
+        <StoreSummary store={store} />
+      </View>
+      <Icon name={'arrow-forward'} size={28} color={colors.primary} />
     </TouchableOpacity>
   );
 };
@@ -72,8 +75,15 @@ const makeStyles = (colors: any) =>
   StyleSheet.create({
     container: {
       flexDirection: 'row',
+      alignItems: 'center',
+      paddingTop: 8,
+      paddingBottom: 8,
+      justifyContent: 'space-between',
+    },
+    summaryContainer: {
+      width: '80%',
+      flexDirection: 'row',
       alignItems: 'flex-start',
-      padding: 10,
     },
     name: {
       color: colors.neutral400,
@@ -86,6 +96,8 @@ const makeStyles = (colors: any) =>
     },
     textContainer: {
       flexDirection: 'column',
+      flex: 1,
+      paddingLeft: 8,
     },
   });
 

@@ -1,25 +1,18 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Text} from 'react-native-paper';
-import VegNonVegTag from '../../../../../components/products/VegNonVegTag';
 import useFormatNumber from '../../../../../hooks/useFormatNumber';
-import {CURRENCY_SYMBOLS, FB_DOMAIN} from '../../../../../utils/constants';
+import {CURRENCY_SYMBOLS} from '../../../../../utils/constants';
 import {useAppTheme} from '../../../../../utils/theme';
 import {ProductModel} from '../../../types/Product';
 
 const ProductSummary = ({product}: {product: ProductModel}) => {
   const {formatNumber} = useFormatNumber();
-  const isFBDomain = product.domain === FB_DOMAIN;
   const theme = useAppTheme();
   const styles = makeStyles(theme.colors);
 
   return (
     <View style={styles.summaryContainer}>
-      {isFBDomain && (
-        <View style={styles.vegNonVegContainer}>
-          <VegNonVegTag tags={product.tags} />
-        </View>
-      )}
       <Text
         variant={'labelMedium'}
         numberOfLines={2}
@@ -80,14 +73,6 @@ const makeStyles = (colors: any) =>
     moreOptions: {
       color: colors.success600,
       marginBottom: 8,
-    },
-    vegNonVegContainer: {
-      flexDirection: 'row',
-      justifyContent: 'flex-end',
-      position: 'absolute',
-      width: '100%',
-      paddingTop: 12,
-      paddingRight: 12,
     },
   });
 

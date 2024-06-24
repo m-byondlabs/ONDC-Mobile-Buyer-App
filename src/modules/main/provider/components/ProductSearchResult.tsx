@@ -4,7 +4,6 @@ import React from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Text} from 'react-native-paper';
 import {BorderImage} from '../../../../components/image/BorderImage';
-import VegNonVegTag from '../../../../components/products/VegNonVegTag';
 import useFormatNumber from '../../../../hooks/useFormatNumber';
 import {CURRENCY_SYMBOLS, FB_DOMAIN} from '../../../../utils/constants';
 import {useAppTheme} from '../../../../utils/theme';
@@ -25,13 +24,8 @@ const ProductSummary = ({product}: {product: ProductModel}) => {
 
   return (
     <View style={styles.summaryContainer}>
-      {isFBDomain && (
-        <View style={styles.vegNonVegContainer}>
-          <VegNonVegTag tags={product.tags} />
-        </View>
-      )}
       <Text
-        variant={'labelMedium'}
+        variant={'titleLarge'}
         numberOfLines={1}
         ellipsizeMode={'tail'}
         style={styles.name}>
@@ -39,7 +33,7 @@ const ProductSummary = ({product}: {product: ProductModel}) => {
       </Text>
       {product.unitizedValue && (
         <Text
-          variant={'labelSmall'}
+          variant={'bodyMedium'}
           numberOfLines={1}
           ellipsizeMode={'tail'}
           style={styles.provider}>
@@ -47,7 +41,7 @@ const ProductSummary = ({product}: {product: ProductModel}) => {
         </Text>
       )}
       <View style={styles.row}>
-        <Text variant={'bodyLarge'} style={styles.amount}>
+        <Text variant={'titleLarge'} style={styles.amount}>
           {CURRENCY_SYMBOLS[product.currency]}
           {formatNumber(product.price)}
         </Text>
@@ -98,7 +92,7 @@ const ProductSearchResult: React.FC<Product> = (productModel: Product) => {
 const makeStyles = (colors: any) =>
   StyleSheet.create({
     container: {
-      width: 230,
+      width: 250,
       paddingHorizontal: 8,
       flex: 1,
       flexDirection: 'row',

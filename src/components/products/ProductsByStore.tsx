@@ -89,6 +89,7 @@ const ProductsByStore = ({
       data={providers}
       renderItem={storeWithProductsComponent}
       keyExtractor={item => item.id}
+      ItemSeparatorComponent={() => <View style={styles.divider} />}
     />
   );
 };
@@ -117,6 +118,10 @@ const makeStyles = (colors: any) =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
+    },
+    divider: {
+      height: 2,
+      backgroundColor: colors.neutral100,
     },
   });
 
