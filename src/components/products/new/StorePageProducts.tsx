@@ -2,7 +2,7 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {ProgressBar} from 'react-native-paper';
+import {Button, ProgressBar} from 'react-native-paper';
 import {useSelector} from 'react-redux';
 
 import {FlatList} from 'react-native-gesture-handler';
@@ -240,9 +240,16 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
       />
       <View style={styles.searchContainer}>
         <ProductSearch
+          style={styles.searchBar}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
         />
+        <Button
+          icon="filter"
+          mode="contained"
+          onPress={() => navigation.navigate('Filters')}>
+          Categories
+        </Button>
       </View>
 
       {productsRequested ? (
@@ -282,8 +289,13 @@ const makeStyles = (colors: any) =>
       marginBottom: 12,
     },
     searchContainer: {
+      width: '100%',
+      flexDirection: 'row',
+      flex: 1,
       marginVertical: 8,
+      marginEnd: 8,
       paddingHorizontal: 16,
+      justifyContent: 'space-between',
     },
     searchBar: {
       borderRadius: 10,

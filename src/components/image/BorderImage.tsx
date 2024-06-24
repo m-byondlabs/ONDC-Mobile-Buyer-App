@@ -31,6 +31,7 @@ export const BorderImage: React.FC<BorderImage> = ({
 const makeStyles = (colors: any) =>
   StyleSheet.create({
     imageContainer: {
+      alignSelf: 'center',
       borderRadius: 8,
       marginRight: 8,
       borderColor: colors.neutral100,

@@ -51,6 +51,8 @@ const makeStyles = (colors: any) =>
       height: 40,
       borderColor: colors.neutral200,
       borderWidth: 1,
+      width: '60%',
+      marginEnd: 8,
     },
     inputContainer: {
       marginLeft: 6,
