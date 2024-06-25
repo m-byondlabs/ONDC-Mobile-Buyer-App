@@ -2,31 +2,42 @@ import {Text} from 'react-native-paper';
 
 import React from 'react';
 import {FlatList, StyleSheet, TouchableOpacity, View} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import reactotron from '../../../../../ReactotronConfig';
+import {BorderImage} from '../../../../components/image/BorderImage';
+import {ProductsBySubCategory} from '../../../../components/products/new/StorePageProducts';
 
 // generate 8 grocery categories
-const data = [
-  {key: '1', title: 'Home', icon: 'home'},
-  {key: '2', title: 'Settings', icon: 'settings'},
-  {key: '3', title: 'Profile', icon: 'person'},
-  {key: '4', title: 'Notifications', icon: 'notifications'},
-  {key: '5', title: 'Help', icon: 'help'},
-];
+
+export type StoreCatalogue = {
+  productsBySubCategory: ProductsBySubCategory[];
+  initialSubcategoryIndex: number;
+};
 
 const Item = ({title, icon, onPress}) => (
   <TouchableOpacity style={styles.item} onPress={onPress}>
-    <Icon name={icon} size={24} color="#000" />
-    <Text style={styles.title}>{title}</Text>
+    <BorderImage source={icon} dimension={48} cricular />
+    <Text style={styles.title} numberOfLines={2}>
+      {title}
+    </Text>
   </TouchableOpacity>
 );
 
-const DetailedCatelogue = () => {
+const DetailedCatelogue = ({route, navigation}) => {
+  const {productsBySubCategory, initialSubcategoryIndex} = route.params;
+  reactotron.log('catalogue', {productsBySubCategory, initialSubcategoryIndex});
+
   const [selectedIndex, setSelectedIndex] = React.useState(0);
 
-  const renderItem = ({item, index}) => (
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: ProductsBySubCategory;
+    index: number;
+  }) => (
     <Item
-      title={item.title}
-      icon={item.icon}
+      title={item.subcategory.name}
+      icon={item.subcategory.iconUrl}
       onPress={() => setSelectedIndex(index)}
     />
   );
@@ -35,9 +46,9 @@ const DetailedCatelogue = () => {
     <View style={styles.container}>
       <View style={styles.list}>
         <FlatList
-          data={data}
+          data={productsBySubCategory}
           renderItem={renderItem}
-          keyExtractor={item => item.key}
+          keyExtractor={item => item.subcategory.id}
           contentContainerStyle={{width: 100}}
           getItemLayout={(data, index) => ({
             length: 100,
@@ -46,6 +57,7 @@ const DetailedCatelogue = () => {
           })}
         />
       </View>
+      <View style={styles.divider} />
       <View style={styles.detailsContainer}>
         {/* Render the selected item's details here */}
         <Text style={styles.detailsText}>
@@ -63,17 +75,14 @@ const styles = StyleSheet.create({
   },
   list: {
     width: 70,
-    backgroundColor: '#26934e',
     flex: 0,
   },
   item: {
     width: 70,
+    padding: 4,
     flexDirection: 'column',
-    backgroundColor: '#c81fb7',
-    borderColor: '#26934e',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
   },
   title: {
     fontSize: 16,
@@ -84,11 +93,14 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff000',
   },
   detailsText: {
     fontSize: 18,
     color: '#888',
+  },
+  divider: {
+    width: 1,
+    backgroundColor: '#ccc',
   },
 });
 

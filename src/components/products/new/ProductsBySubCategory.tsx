@@ -5,7 +5,6 @@ import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {Text} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import reactotron from '../../../../ReactotronConfig';
 import Product from '../../../modules/main/provider/components/Product';
 import {ProductModel} from '../../../modules/main/types/Product';
 import {useAppTheme} from '../../../utils/theme';
@@ -19,7 +18,13 @@ export type SubcategoryModel = {
 
 const NoImageAvailable = require('../../../assets/noImage.png');
 
-const SubcategoryHeader = ({subcategory}: {subcategory: SubcategoryModel}) => {
+const SubcategoryHeader = ({
+  subcategory,
+  onSubcategorySelected,
+}: {
+  subcategory: SubcategoryModel;
+  onSubcategorySelected: (subcategory: SubcategoryModel) => void;
+}) => {
   const theme = useAppTheme();
   const styles = makeStyles(theme.colors);
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -35,8 +40,7 @@ const SubcategoryHeader = ({subcategory}: {subcategory: SubcategoryModel}) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        reactotron.log('SubcategoryHeader onPress');
-        navigation.navigate('DetailedCatelogue', {});
+        onSubcategorySelected(subcategory);
       }}>
       <View style={styles.subcategoryContainer}>
         <View style={styles.subcategoryName}>
@@ -57,9 +61,11 @@ const SubcategoryHeader = ({subcategory}: {subcategory: SubcategoryModel}) => {
 const ProductsBySubCategory = ({
   products,
   subcategory,
+  onSubcategorySelected,
 }: {
   products: ProductModel[];
   subcategory: SubcategoryModel;
+  onSubcategorySelected: (subcategory: SubcategoryModel) => void;
 }) => {
   const theme = useAppTheme();
   const styles = makeStyles(theme.colors);
@@ -81,7 +87,10 @@ const ProductsBySubCategory = ({
 
   return (
     <View style={styles.container}>
-      <SubcategoryHeader subcategory={subcategory} />
+      <SubcategoryHeader
+        subcategory={subcategory}
+        onSubcategorySelected={onSubcategorySelected}
+      />
       {horizontalProductList(products)}
       <View style={styles.divider} />
     </View>

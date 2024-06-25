@@ -37,6 +37,11 @@ interface StorePageProducts {
   subcategoryIndex: number;
 }
 
+export type ProductsBySubCategory = {
+  subcategory: SubcategoryModel;
+  products: ProductModel[];
+};
+
 const CancelToken = axios.CancelToken;
 
 const StorePageProducts: React.FC<StorePageProducts> = ({
@@ -239,9 +244,14 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
     }
   }, [userInput, navigation, products, stopAndDestroyVoiceListener]);
 
-  type ProductsBySubCategory = {
-    subcategory: SubcategoryModel;
-    products: ProductModel[];
+  const onSubcategorySelected = (subcategory: SubcategoryModel) => {
+    const routeParams: any = {
+      productsBySubCategory: productsGroupedByCategory,
+      initialSubcategoryIndex: productsGroupedByCategory.findIndex(
+        item => item.subcategory.id === subcategory.id,
+      ),
+    };
+    navigation.navigate('DetailedCatelogue', routeParams);
   };
 
   return (
@@ -289,6 +299,7 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
             <ProductsBySubCategory
               products={item.products}
               subcategory={item.subcategory}
+              onSubcategorySelected={onSubcategorySelected}
             />
           )}
           keyExtractor={item => item.subcategory.id}
