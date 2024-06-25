@@ -1,8 +1,11 @@
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
 import React, {useCallback} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {Text} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import reactotron from '../../../../ReactotronConfig';
 import Product from '../../../modules/main/provider/components/Product';
 import {ProductModel} from '../../../modules/main/types/Product';
 import {useAppTheme} from '../../../utils/theme';
@@ -19,6 +22,8 @@ const NoImageAvailable = require('../../../assets/noImage.png');
 const SubcategoryHeader = ({subcategory}: {subcategory: SubcategoryModel}) => {
   const theme = useAppTheme();
   const styles = makeStyles(theme.colors);
+  const navigation = useNavigation<StackNavigationProp<any>>();
+
   const iconSource = () => {
     // if iconUrl is a number, it is a local image
     if (typeof subcategory.iconUrl === 'number') {
@@ -28,18 +33,24 @@ const SubcategoryHeader = ({subcategory}: {subcategory: SubcategoryModel}) => {
   };
 
   return (
-    <View style={styles.subcategoryContainer}>
-      <View style={styles.subcategoryName}>
-        <BorderImage source={iconSource()} dimension={36} />
-        <Text variant={'titleLarge'}>{subcategory.name}</Text>
+    <TouchableOpacity
+      onPress={() => {
+        reactotron.log('SubcategoryHeader onPress');
+        navigation.navigate('DetailedCatelogue', {});
+      }}>
+      <View style={styles.subcategoryContainer}>
+        <View style={styles.subcategoryName}>
+          <BorderImage source={iconSource()} dimension={36} />
+          <Text variant={'titleLarge'}>{subcategory.name}</Text>
+        </View>
+        <Icon
+          style={styles.cheveron}
+          name={'chevron-right'}
+          size={28}
+          color={theme.colors.primary}
+        />
       </View>
-      <Icon
-        style={styles.cheveron}
-        name={'chevron-right'}
-        size={28}
-        color={theme.colors.primary}
-      />
-    </View>
+    </TouchableOpacity>
   );
 };
 
