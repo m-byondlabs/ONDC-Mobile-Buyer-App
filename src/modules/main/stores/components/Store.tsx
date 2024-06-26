@@ -75,7 +75,7 @@ const makeStyles = (colors: any) =>
   StyleSheet.create({
     container: {
       flexDirection: 'row',
-      alignItems: 'center',
+      alignItems: 'flex-start',
       paddingTop: 8,
       paddingBottom: 8,
       justifyContent: 'space-between',
