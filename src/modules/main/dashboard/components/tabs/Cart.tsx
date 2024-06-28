@@ -1,9 +1,9 @@
+import {useTranslation} from 'react-i18next';
 import {StyleSheet, View} from 'react-native';
 import {Text} from 'react-native-paper';
-import {useTranslation} from 'react-i18next';
 
-import Cart from '../../../cart/Cart';
 import {useAppTheme} from '../../../../../utils/theme';
+import AllCarts from '../../../cart/AllCarts';
 
 const DashboardCart = () => {
   const {t} = useTranslation();
@@ -14,10 +14,10 @@ const DashboardCart = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text variant={'titleLarge'} style={styles.pageTitle}>
-          {t('Cart.My Cart')}
+          {t('Cart.All Carts')}
         </Text>
       </View>
-      <Cart />
+      <AllCarts />
     </View>
   );
 };
@@ -27,6 +27,8 @@ const makeStyles = (colors: any) =>
     container: {
       flex: 1,
       backgroundColor: colors.white,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     header: {
       padding: 16,

@@ -18,6 +18,11 @@ export const locationToStoreModels = (locationObj: any): StoreModel[] => {
   });
 };
 
+const domainToCategories = (domain: string): string => {
+  const category = CATEGORIES.find(item => item.domain === domain);
+  return category ? category.name : 'Category Not Available';
+};
+
 export const searchResultsProviderToStoreModel = (
   provider: any,
   searchQuery: string,
@@ -25,8 +30,7 @@ export const searchResultsProviderToStoreModel = (
   const {id, address} = provider.location_details;
   const {domain} = provider.context;
 
-  const category = CATEGORIES.find(item => item.domain === domain);
-  const categories = category ? [category.name] : ['Category Not Available'];
+  const categories = domainToCategories(domain);
 
   return {
     id,
@@ -37,6 +41,11 @@ export const searchResultsProviderToStoreModel = (
     brandId: provider.id,
     searchQuery,
   };
+};
+
+const quantityToUnitizedValue = (quantity: any): string => {
+  const {measure} = quantity.unitized;
+  return `${measure.value} ${measure.unit}`;
 };
 
 export const itemDetailsToProductModel = (item: any): ProductModel => {
@@ -72,4 +81,56 @@ export const itemDetailsToProductModel = (item: any): ProductModel => {
     domain: context.domain,
     moreOptions,
   };
+};
+
+export type StoreWithProducts = {
+  store: StoreModel;
+  products: ProductModel[];
+};
+
+export const groupCartByProvider = (products: any[]): StoreWithProducts[] => {
+  let providers: any[] = [];
+  products.forEach((item: any) => {
+    const availableProvider = providers.find(
+      (provider: any) => provider.provider.id === item.item.provider.id,
+    );
+    if (availableProvider) {
+      availableProvider.items.push(item.item.product);
+    } else {
+      providers.push({
+        provider: item.item.provider,
+        items: [item.item.product],
+      });
+    }
+  });
+
+  const storesWithProducts: StoreWithProducts[] = [];
+
+  providers.forEach((provider: any) => {
+    const store: StoreModel = {
+      id: provider.provider.id,
+      brandId: provider.provider.id,
+      name: provider.provider.descriptor.name,
+      iconUrl: provider.provider.descriptor.symbol,
+      categories: [], // TODO read from tags servicability
+      address: provider.provider.locations[0].address,
+    };
+
+    const productModels = provider.items.map((item: any) => {
+      return {
+        id: item.id,
+        imageUrl: item.descriptor.symbol,
+        name: item.descriptor.name,
+        price: item.price.value,
+        currency: item.price.currency,
+        tags: item.tags,
+        unitizedValue: quantityToUnitizedValue(item.quantity),
+        domain: '',
+      };
+    });
+
+    storesWithProducts.push({store, products: productModels});
+  });
+
+  return storesWithProducts;
 };

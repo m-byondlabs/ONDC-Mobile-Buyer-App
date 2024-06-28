@@ -270,7 +270,10 @@ const AppNavigation: React.FC<AppNavigation> = ({navigationRef}) => {
         <Stack.Screen
           name="DetailedCatelogue"
           component={DetailedCatelogue}
-          options={{headerShown: true}}
+          options={{
+            title: 'Catalogue',
+            headerShown: true,
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
