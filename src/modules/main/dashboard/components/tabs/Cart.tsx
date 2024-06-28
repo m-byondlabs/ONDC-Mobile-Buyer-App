@@ -27,8 +27,6 @@ const makeStyles = (colors: any) =>
     container: {
       flex: 1,
       backgroundColor: colors.white,
-      justifyContent: 'center',
-      alignItems: 'center',
     },
     header: {
       padding: 16,
