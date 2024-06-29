@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import {Text} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import RBSheet from 'react-native-raw-bottom-sheet';
 import reactotron from '../../../../../../ReactotronConfig';
@@ -73,12 +74,26 @@ const StoreDetails: React.FC<StoreDetails> = ({
           />
           <RBSheet
             ref={refSubcategorySheet}
-            height={300}
+            height={560}
             openDuration={250}
             customStyles={{
               container: styles.sheetContainer,
             }}>
-            <View>
+            <View style={styles.container}>
+              <View style={styles.categorySheetHeader}>
+                <View style={styles.categoryHeaderEmptyView} />
+                <Text variant={'titleLarge'} style={styles.categoryHeaderTitle}>
+                  {t('Global.Categories')}
+                </Text>
+                <TouchableOpacity
+                  style={styles.categoryHeaderCloseButton}
+                  onPress={() => {
+                    refSubcategorySheet.current.close();
+                  }}>
+                  <Icon name={'close'} size={28} />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.sheetDivider} />
               <FlatList
                 data={productsGroupedByCategory}
                 renderItem={({item, index}) => (
@@ -134,16 +149,35 @@ const makeStyles = (colors: any) =>
     },
     sheetContainer: {
       padding: 10,
+      borderTopLeftRadius: 16, // Add top border radius
+      borderTopRightRadius: 16, // Add top border radius
     },
     row: {
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: 10,
     },
-    divider: {
-      height: 5,
+    categorySheetHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 10,
+    },
+    sheetDivider: {
+      height: 1,
       backgroundColor: colors.neutral100,
-      marginVertical: 8,
+      marginBottom: 16,
+    },
+    categoryHeaderEmptyView: {
+      flex: 1,
+    },
+    categoryHeaderTitle: {
+      flex: 2,
+      textAlign: 'center',
+    },
+    categoryHeaderCloseButton: {
+      flex: 1,
+      alignItems: 'flex-end',
     },
   });
 
