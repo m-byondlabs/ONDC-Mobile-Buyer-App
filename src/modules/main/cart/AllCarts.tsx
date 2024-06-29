@@ -46,18 +46,20 @@ const cartTotalAmount = (products: ProductModel[]) => {
 };
 
 const CartItemsSummary = ({
-  products,
+  cart,
   styles,
   colors,
 }: {
-  products: ProductModel[];
+  cart: StoreWithProducts;
   styles: any;
   colors: any;
 }) => {
   const navigation = useNavigation<any>();
 
+  const {store, products} = cart;
+
   const navigateToCart = () => {
-    navigation.navigate('Cart');
+    navigation.navigate('Cart', {providerId: store.id});
   };
 
   // TODO: Replace with actual data
@@ -119,11 +121,7 @@ const AllCarts = () => {
     return (
       <View style={styles.listContainer}>
         <StoreSummary store={cart.store} styles={styles} />
-        <CartItemsSummary
-          products={cart.products}
-          styles={styles}
-          colors={theme.colors}
-        />
+        <CartItemsSummary cart={cart} styles={styles} colors={theme.colors} />
       </View>
     );
   };

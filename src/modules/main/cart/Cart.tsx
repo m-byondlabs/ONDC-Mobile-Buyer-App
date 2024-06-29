@@ -1,3 +1,10 @@
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+} from '@react-navigation/native';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {
   ActivityIndicator,
@@ -6,38 +13,34 @@ import {
   ProgressBar,
   Text,
 } from 'react-native-paper';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {useSelector} from 'react-redux';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {
-  useFocusEffect,
-  useIsFocused,
-  useNavigation,
-} from '@react-navigation/native';
-import {useTranslation} from 'react-i18next';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {useSelector} from 'react-redux';
+import reactotron from '../../../../ReactotronConfig';
+import CloseSheetContainer from '../../../components/bottomSheet/CloseSheetContainer';
+import useConfirmItems from '../../../hooks/useConfirmItems';
+import useFormatNumber from '../../../hooks/useFormatNumber';
+import useReadAudio from '../../../hooks/useReadAudio';
+import useSelectItems from '../../../hooks/useSelectItems';
+import {VIEW_DELIVERY_OPTIONS_COMMAND} from '../../../utils/constants';
+import {useAppTheme} from '../../../utils/theme';
 import {
   compareIgnoringSpaces,
   getPriceWithCustomisations,
   isItemCustomization,
   showToastWithGravity,
 } from '../../../utils/utils';
+import AddressList from './components/AddressList';
 import CartItems from './components/CartItems';
-import useSelectItems from '../../../hooks/useSelectItems';
 import EmptyCart from './components/EmptyCart';
 import Fulfillment from './components/Fulfillment';
-import AddressList from './components/AddressList';
 import Payment from './components/Payment';
-import useConfirmItems from '../../../hooks/useConfirmItems';
-import CloseSheetContainer from '../../../components/bottomSheet/CloseSheetContainer';
-import {useAppTheme} from '../../../utils/theme';
-import useReadAudio from '../../../hooks/useReadAudio';
-import {VIEW_DELIVERY_OPTIONS_COMMAND} from '../../../utils/constants';
-import useFormatNumber from '../../../hooks/useFormatNumber';
 
 const screenHeight: number = Dimensions.get('screen').height;
 
-const Cart = () => {
+const Cart = ({route}) => {
+  const {providerId} = route.params;
+  reactotron.log('selected provider id', providerId);
   const {formatNumber} = useFormatNumber();
   const voiceDetectionStarted = useRef<boolean>(false);
   const navigation = useNavigation<any>();
@@ -86,7 +89,7 @@ const Cart = () => {
     setSelectedItems,
     selectedItemsForInit,
     updateSelectedItemsForInit,
-  } = useSelectItems(openFulfillmentSheet);
+  } = useSelectItems(openFulfillmentSheet, providerId);
 
   const {language} = useSelector(({authReducer}) => authReducer);
   const {
@@ -481,6 +484,8 @@ const Cart = () => {
     const getProviderWiseItems = () => {
       let providers: any[] = [];
       cartItems.forEach((item: any) => {
+        // filter out items from other carts
+
         const availableProvider = providers.find(
           (provider: any) => provider.provider.id === item.item.provider.id,
         );

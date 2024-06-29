@@ -1,15 +1,16 @@
 import uuid from 'react-native-uuid';
 // @ts-ignore
-import RNEventSource from 'react-native-event-source';
-import {useEffect, useRef, useState} from 'react';
-import axios from 'axios';
-import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
+import axios from 'axios';
+import {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import RNEventSource from 'react-native-event-source';
+import {useDispatch, useSelector} from 'react-redux';
 
-import {constructQuoteObject, showToastWithGravity} from '../utils/utils';
-import {SSE_TIMEOUT} from '../utils/constants';
+import reactotron from '../../ReactotronConfig';
+import {updateTransactionId} from '../redux/auth/actions';
+import {updateCartItems} from '../redux/cart/actions';
 import {
   API_BASE_URL,
   CART,
@@ -17,14 +18,15 @@ import {
   ON_SELECT,
   SELECT,
 } from '../utils/apiActions';
+import {SSE_TIMEOUT} from '../utils/constants';
 import {setStoredData} from '../utils/storage';
+import {constructQuoteObject, showToastWithGravity} from '../utils/utils';
 import useNetworkHandling from './useNetworkHandling';
-import {updateCartItems} from '../redux/cart/actions';
-import {updateTransactionId} from '../redux/auth/actions';
 
 const CancelToken = axios.CancelToken;
 
-export default (openFulfillmentSheet: () => void) => {
+export default (openFulfillmentSheet: () => void, selectedProviderId?: any) => {
+  reactotron.log('useSelectItems');
   const {t} = useTranslation();
   const {getDataWithAuth, postDataWithAuth} = useNetworkHandling();
   const dispatch = useDispatch();
@@ -88,6 +90,16 @@ export default (openFulfillmentSheet: () => void) => {
     checkDifferentCategory(items);
   };
 
+  const filterCartItemsForProvider = (items: any[]) => {
+    if (!selectedProviderId) {
+      return items;
+    }
+    const providerItems = items.filter(
+      item => item.item.provider.id === selectedProviderId,
+    );
+    return providerItems;
+  };
+
   const getCartItems = async () => {
     try {
       setLoading(true);
@@ -96,7 +108,7 @@ export default (openFulfillmentSheet: () => void) => {
         `${API_BASE_URL}${CART}/${uid}`,
         source.current.token,
       );
-      setCartItems(data);
+      setCartItems(filterCartItemsForProvider(data));
       dispatch(updateCartItems(data));
       updatedCartItems.current = data;
     } catch (error) {
@@ -283,6 +295,10 @@ export default (openFulfillmentSheet: () => void) => {
         }
       });
       setSelectedItemsForInit(updatedCartItems.current.concat([]));
+      reactotron.log(
+        'set selected items for init',
+        responseRef.current.concat([]),
+      );
       setSelectedItems(responseRef.current.concat([]));
       openFulfillmentSheet();
     } catch (err: any) {
