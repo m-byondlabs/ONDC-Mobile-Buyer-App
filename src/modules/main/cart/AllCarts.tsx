@@ -16,6 +16,8 @@ import {StoreWithProducts, groupCartByProvider} from '../../../utils/formatter';
 import {useAppTheme} from '../../../utils/theme';
 import {ProductModel} from '../types/Product';
 
+const PRODUCT_IMAGE_SIZE = 64;
+
 const showAlert = (
   cart: StoreWithProducts,
   handleRemoveCart: (cart: StoreWithProducts) => void,
@@ -41,6 +43,49 @@ const showAlert = (
       cancelable: true,
     },
   );
+};
+
+const ImageStack = ({image1Uri, image2Uri, styles}) => {
+  return (
+    <View style={styles.imagesContainer}>
+      <View style={styles.firstImage}>
+        <BorderImage
+          source={{uri: image1Uri}}
+          dimension={PRODUCT_IMAGE_SIZE}
+          margin={false}
+        />
+      </View>
+      <View style={styles.overlapContainer}>
+        <BorderImage source={{uri: image2Uri}} dimension={PRODUCT_IMAGE_SIZE} />
+      </View>
+    </View>
+  );
+};
+
+const ProductImageStack = ({
+  products,
+  styles,
+}: {
+  products: ProductModel[];
+  styles: any;
+}) => {
+  // Show an image stack with two images if there are more than one product otherwise show a single image
+  if (products.length > 1) {
+    return (
+      <ImageStack
+        image1Uri={products[0].imageUrl}
+        image2Uri={products[1].imageUrl}
+        styles={styles}
+      />
+    );
+  } else {
+    return (
+      <BorderImage
+        source={{uri: products[0].imageUrl}}
+        dimension={PRODUCT_IMAGE_SIZE}
+      />
+    );
+  }
 };
 
 const StoreSummary = ({
@@ -136,7 +181,7 @@ const CartItemsSummary = ({
         {'Items in cart (' + quantityCount(products) + ')'}
       </Text>
       <View style={styles.productsSummary}>
-        <BorderImage source={{uri: products[0].imageUrl}} dimension={64} />
+        <ProductImageStack products={products} styles={styles} />
         <Text
           ellipsizeMode={'tail'}
           numberOfLines={2}
@@ -179,8 +224,7 @@ const AllCarts = () => {
 
   const {uid} = useSelector(({authReducer}) => authReducer);
 
-  const {deleteDataWithAuth, getDataWithAuth, putDataWithAuth} =
-    useNetworkHandling();
+  const {deleteDataWithAuth} = useNetworkHandling();
 
   const source = useRef<any>(null);
 
@@ -312,6 +356,19 @@ const makeStyles = (colors: any) =>
     },
     payable: {
       flexDirection: 'row',
+    },
+    imagesContainer: {
+      flexDirection: 'row',
+      marginRight: 40,
+    },
+    firstImage: {
+      backgroundColor: colors.white,
+      padding: 0,
+    },
+    overlapContainer: {
+      position: 'absolute',
+      left: 32,
+      zIndex: -1,
     },
   });
 

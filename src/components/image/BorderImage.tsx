@@ -9,6 +9,7 @@ export interface BorderImage {
   dimension?: number;
   cricular?: boolean;
   borderColor?: string;
+  margin?: boolean;
 }
 
 const NoImageAvailable = require('../../assets/noImage.png');
@@ -18,10 +19,17 @@ export const BorderImage: React.FC<BorderImage> = ({
   dimension = 96,
   cricular = false,
   borderColor,
+  margin = true,
 }) => {
   const theme = useAppTheme();
   const [imageSource, setImageSource] = useState(source);
-  const styles = makeStyles(theme.colors, cricular, dimension, borderColor);
+  const styles = makeStyles(
+    theme.colors,
+    cricular,
+    dimension,
+    borderColor,
+    margin,
+  );
   return (
     <FastImage
       resizeMode={FastImage.resizeMode.contain}
@@ -37,12 +45,13 @@ const makeStyles = (
   cricular: boolean,
   dimension: number,
   borderColor: string | undefined,
+  margin: boolean,
 ) =>
   StyleSheet.create({
     imageContainer: {
       alignSelf: 'center',
       borderRadius: cricular ? dimension / 2 : 8,
-      marginRight: 8,
+      marginRight: margin ? 8 : 0,
       borderColor: borderColor ? borderColor : colors.neutral100,
       borderWidth: borderColor ? 2 : 1,
     },
