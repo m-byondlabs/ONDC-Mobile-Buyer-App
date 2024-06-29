@@ -126,7 +126,7 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
   }, [products, searchQuery]);
 
   const subcategoryIcon = (subcategory: string): number => {
-    const NO_IMAGE = require('../../../assets/noImage.png');
+    const NO_IMAGE = require('../../../assets/categories/category_no_image.png');
 
     const allCatgories = Object.keys(PRODUCT_SUBCATEGORY);
     let iconUrl = NO_IMAGE;
