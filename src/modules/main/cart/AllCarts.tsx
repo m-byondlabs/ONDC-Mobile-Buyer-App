@@ -5,6 +5,7 @@ import {Text} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {BorderImage} from '../../../components/image/BorderImage';
 import useCartItems from '../../../hooks/useCartItems';
+import {CURRENCY_SYMBOLS} from '../../../utils/constants';
 import {StoreWithProducts, groupCartByProvider} from '../../../utils/formatter';
 import {useAppTheme} from '../../../utils/theme';
 import {StoreModel} from '../stores/components/Store';
@@ -31,6 +32,14 @@ const StoreSummary = ({store, styles}: {store: StoreModel; styles: any}) => {
 const quantityCount = (products: ProductModel[]) => {
   return products.reduce(
     (acc, product) => acc + (product.cartQuantity ?? 0),
+    0,
+  );
+};
+
+const cartTotalAmount = (products: ProductModel[]) => {
+  return products.reduce(
+    (acc, product) =>
+      acc + parseFloat(product.price) * (product.cartQuantity ?? 0),
     0,
   );
 };
@@ -62,7 +71,9 @@ const CartItemsSummary = ({
       <View style={styles.cartTotal}>
         <View style={styles.payable}>
           <Text variant="bodyLarge">Total: </Text>
-          <Text variant="titleLarge">{840}</Text>
+          <Text variant="titleLarge">{`${
+            CURRENCY_SYMBOLS[products[0].currency]
+          }${cartTotalAmount(products)}`}</Text>
         </View>
         <TouchableOpacity style={styles.pill}>
           <Text style={styles.pillText}>View Cart</Text>
