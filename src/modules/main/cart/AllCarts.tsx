@@ -1,8 +1,10 @@
+import {useNavigation} from '@react-navigation/native';
 import React, {useEffect} from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {Text} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import reactotron from '../../../../ReactotronConfig';
 import {BorderImage} from '../../../components/image/BorderImage';
 import useCartItems from '../../../hooks/useCartItems';
 import {CURRENCY_SYMBOLS} from '../../../utils/constants';
@@ -53,9 +55,16 @@ const CartItemsSummary = ({
   styles: any;
   colors: any;
 }) => {
+  const navigation = useNavigation<any>();
+
   // TODO: Replace with actual data
   return (
-    <View style={styles.cartItemsSummaryContainer}>
+    <TouchableOpacity
+      style={styles.cartItemsSummaryContainer}
+      onPress={() => {
+        reactotron.log('CartItemsSummary navigate to cart');
+        navigation.navigate('Cart');
+      }}>
       <Text variant="titleMedium" style={styles.itemsInCart}>
         {'Items in cart (' + quantityCount(products) + ')'}
       </Text>
@@ -85,7 +94,7 @@ const CartItemsSummary = ({
           />
         </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

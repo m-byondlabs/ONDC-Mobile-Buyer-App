@@ -2,6 +2,7 @@ import {useTranslation} from 'react-i18next';
 import {StyleSheet, View} from 'react-native';
 import {Text} from 'react-native-paper';
 
+import React from 'react';
 import {useAppTheme} from '../../../../../utils/theme';
 import AllCarts from '../../../cart/AllCarts';
 
