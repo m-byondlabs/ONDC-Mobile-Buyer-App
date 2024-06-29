@@ -1,18 +1,58 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useEffect} from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import axios from 'axios';
+import React, {useEffect, useRef} from 'react';
+import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {Text} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import reactotron from '../../../../ReactotronConfig';
 import {BorderImage} from '../../../components/image/BorderImage';
+import useNetworkHandling from '../../../hooks/useNetworkHandling';
+import {updateCartItems} from '../../../redux/cart/actions';
+import {API_BASE_URL, CART} from '../../../utils/apiActions';
 import {CURRENCY_SYMBOLS} from '../../../utils/constants';
 import {StoreWithProducts, groupCartByProvider} from '../../../utils/formatter';
 import {useAppTheme} from '../../../utils/theme';
-import {StoreModel} from '../stores/components/Store';
 import {ProductModel} from '../types/Product';
 
-const StoreSummary = ({store, styles}: {store: StoreModel; styles: any}) => {
+const showAlert = (
+  cart: StoreWithProducts,
+  handleRemoveCart: (cart: StoreWithProducts) => void,
+) => {
+  const {store, products} = cart;
+
+  const handleCancel = () => {
+    reactotron.log('Cancel remove cart');
+  };
+
+  Alert.alert(
+    'Remove Cart?',
+    `Are you sure you want to remove all items from ${store.name}?`,
+    [
+      {
+        text: 'Cancel',
+        onPress: () => handleCancel(),
+        style: 'cancel',
+      },
+      {text: 'Yes, remove', onPress: () => handleRemoveCart(cart)},
+    ],
+    {
+      cancelable: true,
+    },
+  );
+};
+
+const StoreSummary = ({
+  cart,
+  handleRemoveCart,
+  styles,
+}: {
+  cart: StoreWithProducts;
+  handleRemoveCart: (cart: StoreWithProducts) => void;
+  styles: any;
+}) => {
+  const {store} = cart;
   return (
     <View style={styles.storeSummaryContainer}>
       <View style={styles.storeContentContainer}>
@@ -23,7 +63,13 @@ const StoreSummary = ({store, styles}: {store: StoreModel; styles: any}) => {
           </Text>
           <Text style={styles.storeLocation}>{store.address.street}</Text>
         </View>
-        <Icon name={'close'} size={28} />
+        <TouchableOpacity
+          onPress={() => {
+            reactotron.log('Clear store cart');
+            showAlert(cart, handleRemoveCart);
+          }}>
+          <Icon name={'close'} size={28} />
+        </TouchableOpacity>
       </View>
       <View style={styles.divider} />
     </View>
@@ -101,6 +147,7 @@ const CartItemsSummary = ({
     </TouchableOpacity>
   );
 };
+const CancelToken = axios.CancelToken;
 
 const AllCarts = () => {
   const theme = useAppTheme();
@@ -113,14 +160,49 @@ const AllCarts = () => {
     StoreWithProducts[]
   >([]);
 
+  const {uid} = useSelector(({authReducer}) => authReducer);
+
+  const {deleteDataWithAuth, getDataWithAuth, putDataWithAuth} =
+    useNetworkHandling();
+
+  const source = useRef<any>(null);
+
+  const dispatch = useDispatch();
+
+  const handleRemoveCart = async (cart: StoreWithProducts) => {
+    try {
+      const {products} = cart;
+      products.forEach(async product => {
+        source.current = CancelToken.source();
+        await deleteDataWithAuth(
+          `${API_BASE_URL}${CART}/${uid}/${product.cartItemId}`,
+          source.current.token,
+        );
+      });
+      // filter all the items from cartItems that are not in the current store
+      reactotron.log('cartItems before deletion', cartItems);
+      const newCartItems = cartItems.filter(
+        item => item.item.provider.id !== cart.store.id,
+      );
+      dispatch(updateCartItems(newCartItems));
+    } catch (error) {
+      console.log('Error fetching product details:', error);
+    }
+  };
+
   useEffect(() => {
+    reactotron.log('cartItems should be updated after deletion', cartItems);
     setStoreWithCartItems(groupCartByProvider(cartItems));
   }, [cartItems]);
 
   const renderCartStore = (cart: StoreWithProducts) => {
     return (
       <View style={styles.listContainer}>
-        <StoreSummary store={cart.store} styles={styles} />
+        <StoreSummary
+          cart={cart}
+          styles={styles}
+          handleRemoveCart={handleRemoveCart}
+        />
         <CartItemsSummary cart={cart} styles={styles} colors={theme.colors} />
       </View>
     );

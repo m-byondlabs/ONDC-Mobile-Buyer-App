@@ -109,6 +109,7 @@ export const groupCartByProvider = (cartItems: any[]): StoreWithProducts[] => {
     const productWithQuantity = {
       ...item.item.product,
       cartQuantity: item.item.quantity,
+      cartItemId: item._id,
     };
 
     if (availableProvider) {
@@ -144,6 +145,7 @@ export const groupCartByProvider = (cartItems: any[]): StoreWithProducts[] => {
         unitizedValue: quantityToUnitizedValue(item.quantity),
         domain: '',
         cartQuantity: item.cartQuantity.count,
+        cartItemId: item.cartItemId,
       };
     });
 

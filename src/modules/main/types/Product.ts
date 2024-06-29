@@ -10,4 +10,5 @@ export type ProductModel = {
   tags: string[];
   moreOptions?: boolean;
   cartQuantity?: number;
+  cartItemId?: string;
 };
