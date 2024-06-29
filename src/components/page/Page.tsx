@@ -1,19 +1,21 @@
-import React from 'react';
-import {useSelector} from 'react-redux';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import {Text} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import {useAppTheme} from '../../utils/theme';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Text} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import {useSelector} from 'react-redux';
 import useFormatNumber from '../../hooks/useFormatNumber';
+import {filterCartByProvider, totalQuantityCount} from '../../utils/formatter';
+import {useAppTheme} from '../../utils/theme';
 
 interface Page {
+  providerId?: any;
   children: React.ReactNode;
 }
 
-const Page: React.FC<Page> = ({children}) => {
+const Page: React.FC<Page> = ({providerId, children}) => {
   const {formatNumber} = useFormatNumber();
   const {t} = useTranslation();
   const theme = useAppTheme();
@@ -21,9 +23,17 @@ const Page: React.FC<Page> = ({children}) => {
   const {cartItems} = useSelector(({cartReducer}) => cartReducer);
   const styles = makeStyles(theme.colors);
 
-  const navigateToCart = () => navigation.navigate('Cart');
+  const navigateToCart = () => {
+    if (!providerId) {
+      navigation.navigate('All Carts');
+      return;
+    }
+    navigation.navigate('Cart', {providerId: providerId});
+  };
 
-  const itemCount = cartItems.length;
+  const itemCount = totalQuantityCount(
+    filterCartByProvider(cartItems, providerId),
+  );
   return (
     <View style={styles.pageContainer}>
       {children}

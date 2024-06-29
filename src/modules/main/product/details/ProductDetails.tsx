@@ -471,7 +471,7 @@ const ProductDetails: React.FC<ProductDetails> = ({
 
   return (
     <View style={styles.container}>
-      <Page>
+      <Page providerId={product.provider_details.id}>
         {userInteractionStarted && (
           <ProgressBar indeterminate color={theme.colors.success600} />
         )}

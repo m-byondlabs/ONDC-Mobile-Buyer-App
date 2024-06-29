@@ -101,7 +101,7 @@ const BrandDetails = ({route: {params}}: {route: any}) => {
   }
 
   return (
-    <Page>
+    <Page providerId={provider.id}>
       <View style={styles.container}>
         {provider?.domain === FB_DOMAIN ? (
           <FBBrandDetails

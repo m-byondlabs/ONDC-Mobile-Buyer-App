@@ -88,6 +88,17 @@ export type StoreWithProducts = {
   products: ProductModel[];
 };
 
+export const filterCartByProvider = (cartItems: any[], providerId?: string) => {
+  if (!providerId) {
+    return cartItems;
+  }
+  return cartItems.filter(item => item.item.provider.id === providerId);
+};
+
+export const totalQuantityCount = (cartItems: any[]): number => {
+  return cartItems.reduce((acc, item) => acc + item.item.quantity.count, 0);
+};
+
 export const groupCartByProvider = (cartItems: any[]): StoreWithProducts[] => {
   let carts: any[] = [];
   cartItems.forEach((item: any) => {

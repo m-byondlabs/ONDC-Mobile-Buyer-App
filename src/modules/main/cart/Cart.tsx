@@ -16,7 +16,6 @@ import {
 import RBSheet from 'react-native-raw-bottom-sheet';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useSelector} from 'react-redux';
-import reactotron from '../../../../ReactotronConfig';
 import CloseSheetContainer from '../../../components/bottomSheet/CloseSheetContainer';
 import useConfirmItems from '../../../hooks/useConfirmItems';
 import useFormatNumber from '../../../hooks/useFormatNumber';
@@ -39,8 +38,7 @@ import Payment from './components/Payment';
 const screenHeight: number = Dimensions.get('screen').height;
 
 const Cart = ({route}) => {
-  const {providerId} = route.params;
-  reactotron.log('selected provider id', providerId);
+  const {providerId} = route.params ?? {};
   const {formatNumber} = useFormatNumber();
   const voiceDetectionStarted = useRef<boolean>(false);
   const navigation = useNavigation<any>();
