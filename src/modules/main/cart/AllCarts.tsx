@@ -5,7 +5,6 @@ import {FlatList} from 'react-native-gesture-handler';
 import {Text} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useSelector} from 'react-redux';
-import reactotron from '../../../../ReactotronConfig';
 import {BorderImage} from '../../../components/image/BorderImage';
 import {CURRENCY_SYMBOLS} from '../../../utils/constants';
 import {StoreWithProducts, groupCartByProvider} from '../../../utils/formatter';
@@ -57,13 +56,16 @@ const CartItemsSummary = ({
 }) => {
   const navigation = useNavigation<any>();
 
+  const navigateToCart = () => {
+    navigation.navigate('Cart');
+  };
+
   // TODO: Replace with actual data
   return (
     <TouchableOpacity
       style={styles.cartItemsSummaryContainer}
       onPress={() => {
-        reactotron.log('CartItemsSummary navigate to cart');
-        navigation.navigate('Cart');
+        navigateToCart();
       }}>
       <Text variant="titleMedium" style={styles.itemsInCart}>
         {'Items in cart (' + quantityCount(products) + ')'}
@@ -84,7 +86,7 @@ const CartItemsSummary = ({
             CURRENCY_SYMBOLS[products[0].currency]
           }${cartTotalAmount(products)}`}</Text>
         </View>
-        <TouchableOpacity style={styles.pill}>
+        <View style={styles.pill}>
           <Text style={styles.pillText}>View Cart</Text>
           <Icon
             name="chevron-right"
@@ -92,7 +94,7 @@ const CartItemsSummary = ({
             style={styles.icon}
             color={colors.white}
           />
-        </TouchableOpacity>
+        </View>
       </View>
     </TouchableOpacity>
   );
