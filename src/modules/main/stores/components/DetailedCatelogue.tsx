@@ -1,6 +1,6 @@
 import {Text} from 'react-native-paper';
 
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo, useRef} from 'react';
 import {FlatList, StyleSheet, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import reactotron from '../../../../../ReactotronConfig';
@@ -110,7 +110,10 @@ const DetailedCatelogue = ({route, navigation}) => {
   const {productsBySubCategory, initialSubcategoryIndex} = route.params;
   reactotron.log('catalogue', {productsBySubCategory, initialSubcategoryIndex});
 
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [selectedIndex, setSelectedIndex] = React.useState(
+    initialSubcategoryIndex,
+  );
+  const catalogueListRef = useRef<FlatList>(null);
 
   const renderItem = ({
     item,
@@ -133,14 +136,27 @@ const DetailedCatelogue = ({route, navigation}) => {
     );
   };
 
+  useEffect(() => {
+    catalogueListRef.current?.scrollToIndex({
+      animated: true,
+      index: initialSubcategoryIndex,
+    });
+  }, [initialSubcategoryIndex]);
+
   return (
     <View style={styles.container}>
       <View style={styles.list}>
         <FlatList
+          ref={catalogueListRef}
           data={productsBySubCategory}
           renderItem={renderItem}
           keyExtractor={item => item.subcategory.id}
           extraData={selectedIndex}
+          getItemLayout={(data, index) => ({
+            length: 70,
+            offset: 70 * index,
+            index,
+          })}
         />
       </View>
       <View style={styles.divider} />
