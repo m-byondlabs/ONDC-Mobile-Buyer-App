@@ -30,7 +30,7 @@ export const searchResultsProviderToStoreModel = (
   const {id, address} = provider.location_details;
   const {domain} = provider.context;
 
-  const categories = domainToCategories(domain);
+  const categories = [domainToCategories(domain)];
 
   return {
     id,
