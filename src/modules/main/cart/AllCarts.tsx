@@ -3,9 +3,8 @@ import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {Text} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import reactotron from '../../../../ReactotronConfig';
 import {BorderImage} from '../../../components/image/BorderImage';
-import useSelectItems from '../../../hooks/useSelectItems';
+import useCartItems from '../../../hooks/useCartItems';
 import {StoreWithProducts, groupCartByProvider} from '../../../utils/formatter';
 import {useAppTheme} from '../../../utils/theme';
 import {StoreModel} from '../stores/components/Store';
@@ -73,28 +72,21 @@ const CartItemsSummary = ({
 };
 
 const AllCarts = () => {
-  const openFulfillmentSheet = () => {
-    // TODO: remove the need for this
-  };
   const theme = useAppTheme();
 
   const styles = makeStyles(theme.colors);
 
-  const {cartItems, getCartItems} = useSelectItems(openFulfillmentSheet);
+  const {getCartItems} = useCartItems();
 
   const [storesWithCartItems, setStoreWithCartItems] = React.useState<
     StoreWithProducts[]
   >([]);
 
   useEffect(() => {
-    reactotron.log('cartItems', cartItems);
-    const storesWithCartItems = groupCartByProvider(cartItems);
-    setStoreWithCartItems(storesWithCartItems);
-  }, [cartItems]);
-
-  useEffect(() => {
-    getCartItems();
-  });
+    getCartItems().then(carts => {
+      setStoreWithCartItems(groupCartByProvider(carts));
+    });
+  }, []);
 
   const renderCartStore = (cart: StoreWithProducts) => {
     return (
