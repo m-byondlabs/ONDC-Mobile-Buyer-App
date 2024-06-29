@@ -9,4 +9,5 @@ export type ProductModel = {
   domain: string;
   tags: string[];
   moreOptions?: boolean;
+  cartQuantity?: number;
 };

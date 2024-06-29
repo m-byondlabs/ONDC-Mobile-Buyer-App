@@ -88,35 +88,41 @@ export type StoreWithProducts = {
   products: ProductModel[];
 };
 
-export const groupCartByProvider = (products: any[]): StoreWithProducts[] => {
-  let providers: any[] = [];
-  products.forEach((item: any) => {
-    const availableProvider = providers.find(
-      (provider: any) => provider.provider.id === item.item.provider.id,
+export const groupCartByProvider = (cartItems: any[]): StoreWithProducts[] => {
+  let carts: any[] = [];
+  cartItems.forEach((item: any) => {
+    const availableProvider = carts.find(
+      (cartItem: any) => cartItem.provider.id === item.item.provider.id,
     );
+
+    const productWithQuantity = {
+      ...item.item.product,
+      cartQuantity: item.item.quantity,
+    };
+
     if (availableProvider) {
-      availableProvider.items.push(item.item.product);
+      availableProvider.items.push(productWithQuantity);
     } else {
-      providers.push({
+      carts.push({
         provider: item.item.provider,
-        items: [item.item.product],
+        items: [productWithQuantity],
       });
     }
   });
 
   const storesWithProducts: StoreWithProducts[] = [];
 
-  providers.forEach((provider: any) => {
+  carts.forEach((cart: any) => {
     const store: StoreModel = {
-      id: provider.provider.id,
-      brandId: provider.provider.id,
-      name: provider.provider.descriptor.name,
-      iconUrl: provider.provider.descriptor.symbol,
+      id: cart.provider.id,
+      brandId: cart.provider.id,
+      name: cart.provider.descriptor.name,
+      iconUrl: cart.provider.descriptor.symbol,
       categories: [], // TODO read from tags servicability
-      address: provider.provider.locations[0].address,
+      address: cart.provider.locations[0].address,
     };
 
-    const productModels = provider.items.map((item: any) => {
+    const productModels = cart.items.map((item: any) => {
       return {
         id: item.id,
         imageUrl: item.descriptor.symbol,
@@ -126,6 +132,7 @@ export const groupCartByProvider = (products: any[]): StoreWithProducts[] => {
         tags: item.tags,
         unitizedValue: quantityToUnitizedValue(item.quantity),
         domain: '',
+        cartQuantity: item.cartQuantity.count,
       };
     });
 

@@ -28,6 +28,13 @@ const StoreSummary = ({store, styles}: {store: StoreModel; styles: any}) => {
   );
 };
 
+const quantityCount = (products: ProductModel[]) => {
+  return products.reduce(
+    (acc, product) => acc + (product.cartQuantity ?? 0),
+    0,
+  );
+};
+
 const CartItemsSummary = ({
   products,
   styles,
@@ -41,7 +48,7 @@ const CartItemsSummary = ({
   return (
     <View style={styles.cartItemsSummaryContainer}>
       <Text variant="titleMedium" style={styles.itemsInCart}>
-        {'Items in cart (' + products.length + ')'}
+        {'Items in cart (' + quantityCount(products) + ')'}
       </Text>
       <View style={styles.productsSummary}>
         <BorderImage source={{uri: products[0].imageUrl}} dimension={64} />
