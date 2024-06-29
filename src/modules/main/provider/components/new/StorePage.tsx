@@ -78,27 +78,31 @@ const StoreDetails: React.FC<StoreDetails> = ({
             customStyles={{
               container: styles.sheetContainer,
             }}>
-            <FlatList
-              data={productsGroupedByCategory}
-              renderItem={({item, index}) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    reactotron.log('selected index', index);
-                    setSubcategoryIndex(index);
-                    refSubcategorySheet.current.close();
-                  }}>
-                  <View style={styles.row}>
-                    <BorderImage
-                      source={item.subcategory.iconUrl}
-                      dimension={64}
-                    />
-                    <Text variant={'titleLarge'}>{item.subcategory.name}</Text>
-                    <View style={styles.divider} />
-                  </View>
-                </TouchableOpacity>
-              )}
-              keyExtractor={item => item.subcategory.id}
-            />
+            <View>
+              <FlatList
+                data={productsGroupedByCategory}
+                renderItem={({item, index}) => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      reactotron.log('selected index', index);
+                      setSubcategoryIndex(index);
+                      refSubcategorySheet.current.close();
+                    }}>
+                    <View style={styles.row}>
+                      <BorderImage
+                        source={item.subcategory.iconUrl}
+                        dimension={64}
+                      />
+                      <Text variant={'titleLarge'}>
+                        {item.subcategory.name}
+                      </Text>
+                      <View style={styles.divider} />
+                    </View>
+                  </TouchableOpacity>
+                )}
+                keyExtractor={item => item.subcategory.id}
+              />
+            </View>
           </RBSheet>
         </View>
       </ScrollView>

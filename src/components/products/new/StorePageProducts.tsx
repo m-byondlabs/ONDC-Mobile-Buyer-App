@@ -147,15 +147,6 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
   useEffect(() => {
     reactotron.log('subcategoryIndex scroll to ', subcategoryIndex);
 
-    // scroll to the selected subcategory after the products are loaded
-
-    setTimeout(() => {
-      subcategoryListRef.current?.scrollToIndex({
-        index: subcategoryIndex,
-        animated: true,
-      });
-    }, 500);
-
     subcategoryListRef.current?.scrollToIndex({
       index: subcategoryIndex,
       animated: true,
@@ -291,25 +282,26 @@ const StorePageProducts: React.FC<StorePageProducts> = ({
           ))}
         </View>
       ) : (
-        <FlatList
-          style={{flex: 1}}
-          ref={subcategoryListRef}
-          data={productsGroupedByCategory}
-          renderItem={({item}) => (
-            <ProductsBySubCategory
-              products={item.products}
-              subcategory={item.subcategory}
-              onSubcategorySelected={onSubcategorySelected}
-            />
-          )}
-          keyExtractor={item => item.subcategory.id}
-          horizontal={false}
-          getItemLayout={(data, index) => ({
-            length: 340,
-            offset: 340 * index,
-            index,
-          })}
-        />
+        <View style={styles.categoryList}>
+          <FlatList
+            ref={subcategoryListRef}
+            data={productsGroupedByCategory}
+            renderItem={({item}) => (
+              <ProductsBySubCategory
+                products={item.products}
+                subcategory={item.subcategory}
+                onSubcategorySelected={onSubcategorySelected}
+              />
+            )}
+            keyExtractor={item => item.subcategory.id}
+            horizontal={false}
+            getItemLayout={(data, index) => ({
+              length: 340,
+              offset: 340 * index,
+              index,
+            })}
+          />
+        </View>
       )}
     </View>
   );
@@ -360,6 +352,9 @@ const makeStyles = (colors: any) =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
+    },
+    categoryList: {
+      height: 680,
     },
   });
 
