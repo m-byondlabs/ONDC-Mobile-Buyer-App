@@ -4,9 +4,9 @@ import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import {Text} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {useSelector} from 'react-redux';
 import reactotron from '../../../../ReactotronConfig';
 import {BorderImage} from '../../../components/image/BorderImage';
-import useCartItems from '../../../hooks/useCartItems';
 import {CURRENCY_SYMBOLS} from '../../../utils/constants';
 import {StoreWithProducts, groupCartByProvider} from '../../../utils/formatter';
 import {useAppTheme} from '../../../utils/theme';
@@ -103,17 +103,15 @@ const AllCarts = () => {
 
   const styles = makeStyles(theme.colors);
 
-  const {getCartItems} = useCartItems();
+  const {cartItems} = useSelector(({cartReducer}) => cartReducer);
 
   const [storesWithCartItems, setStoreWithCartItems] = React.useState<
     StoreWithProducts[]
   >([]);
 
   useEffect(() => {
-    getCartItems().then(carts => {
-      setStoreWithCartItems(groupCartByProvider(carts));
-    });
-  }, []);
+    setStoreWithCartItems(groupCartByProvider(cartItems));
+  }, [cartItems]);
 
   const renderCartStore = (cart: StoreWithProducts) => {
     return (

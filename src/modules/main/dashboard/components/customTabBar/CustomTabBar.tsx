@@ -13,6 +13,7 @@ import ListIcon from '../../../../../assets/dashboard/list.svg';
 import ListActiveIcon from '../../../../../assets/dashboard/list_a.svg';
 import ProfileIcon from '../../../../../assets/dashboard/profile.svg';
 import ProfileActiveIcon from '../../../../../assets/dashboard/profile_a.svg';
+import {groupCartByProvider} from '../../../../../utils/formatter';
 import {useAppTheme} from '../../../../../utils/theme';
 
 interface TabIcon {
@@ -83,7 +84,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
           });
         };
 
-        const badge = cartItems?.length;
+        const badge = groupCartByProvider(cartItems).length;
 
         return (
           <View key={route.name} style={styles.tab}>
