@@ -53,8 +53,25 @@ const StoreSummary = ({
   styles: any;
 }) => {
   const {store} = cart;
+  const navigation = useNavigation<any>();
+
+  const navigateToDetails = () => {
+    const routeParams: any = {
+      brandId: store.brandId,
+    };
+    routeParams.outletId = store.id;
+    routeParams.defaultSearchQuery = store.searchQuery;
+    navigation.navigate('BrandDetails', routeParams);
+  };
+
+  const onStorePress = () => {
+    navigateToDetails();
+  };
+
   return (
-    <View style={styles.storeSummaryContainer}>
+    <TouchableOpacity
+      style={styles.storeSummaryContainer}
+      onPress={onStorePress}>
       <View style={styles.storeContentContainer}>
         <BorderImage source={{uri: store.iconUrl}} dimension={48} />
         <View style={styles.textContainer}>
@@ -72,7 +89,7 @@ const StoreSummary = ({
         </TouchableOpacity>
       </View>
       <View style={styles.divider} />
-    </View>
+    </TouchableOpacity>
   );
 };
 
