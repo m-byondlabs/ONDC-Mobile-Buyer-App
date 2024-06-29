@@ -29,7 +29,9 @@ const makeStyles = (colors: any) =>
       flex: 1,
     },
     header: {
-      padding: 16,
+      paddingTop: 16,
+      paddingBottom: 8,
+      alignItems: 'center',
     },
     pageTitle: {
       color: colors.neutral400,
