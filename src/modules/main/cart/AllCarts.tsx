@@ -92,10 +92,12 @@ const StoreSummary = ({
   cart,
   handleRemoveCart,
   styles,
+  colors,
 }: {
   cart: StoreWithProducts;
   handleRemoveCart: (cart: StoreWithProducts) => void;
   styles: any;
+  colors: any;
 }) => {
   const {store} = cart;
   const navigation = useNavigation<any>();
@@ -130,7 +132,7 @@ const StoreSummary = ({
             reactotron.log('Clear store cart');
             showAlert(cart, handleRemoveCart);
           }}>
-          <Icon name={'close'} size={28} />
+          <Icon name={'close'} size={28} color={colors.neutral300} />
         </TouchableOpacity>
       </View>
       <View style={styles.divider} />
@@ -263,6 +265,7 @@ const AllCarts = () => {
           cart={cart}
           styles={styles}
           handleRemoveCart={handleRemoveCart}
+          colors={theme.colors}
         />
         <CartItemsSummary cart={cart} styles={styles} colors={theme.colors} />
       </View>
