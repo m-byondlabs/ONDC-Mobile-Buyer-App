@@ -44,8 +44,10 @@ export const searchResultsProviderToStoreModel = (
 };
 
 const quantityToUnitizedValue = (quantity: any): string => {
-  const {measure} = quantity.unitized;
-  return `${measure.value} ${measure.unit}`;
+  const {measure} = quantity.unitized || {};
+  const value = measure ? measure.value : '';
+  const unit = measure ? measure.unit : '';
+  return `${value} ${unit}`; // TODO handle for F&B
 };
 
 export const itemDetailsToProductModel = (item: any): ProductModel => {
