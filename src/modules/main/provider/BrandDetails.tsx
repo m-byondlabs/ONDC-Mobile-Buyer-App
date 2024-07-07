@@ -4,6 +4,7 @@ import axios from 'axios';
 import moment from 'moment';
 import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
+import reactotron from '../../../../ReactotronConfig';
 import Page from '../../../components/page/Page';
 import BrandSkeleton from '../../../components/skeleton/BrandSkeleton';
 import useFormatDate from '../../../hooks/useFormatDate';
@@ -71,11 +72,13 @@ const BrandDetails = ({route: {params}}: {route: any}) => {
         `${API_BASE_URL}${PROVIDER}?id=${params.brandId}`,
         source.current.token,
       );
-      const data = providerResponse?.data?.response;
+      reactotron.log('provider response', providerResponse);
+      const data = providerResponse?.data;
       navigation.setOptions({
         headerTitle: data?.descriptor?.name,
       });
       await getOutletDetails();
+      reactotron.log('provider data', data);
       setProvider(data);
     } catch (error) {
       handleApiError(error);

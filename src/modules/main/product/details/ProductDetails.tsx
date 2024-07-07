@@ -119,7 +119,7 @@ const ProductDetails: React.FC<ProductDetails> = ({
         `${API_BASE_URL}${ITEM_DETAILS}?id=${params.productId}`,
         source.current.token,
       );
-      const data = itemResponse?.data?.response;
+      const data = itemResponse?.data;
       let rangePriceTag = null;
       if (data?.item_details?.price?.tags) {
         const findRangePriceTag = data?.item_details?.price?.tags.find(

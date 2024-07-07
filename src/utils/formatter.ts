@@ -52,7 +52,7 @@ export const itemDetailsToProductModel = (item: any): ProductModel => {
   const {item_details, context} = item;
   const {descriptor, quantity} = item_details;
   const imageUrl =
-    descriptor.symbol.length > 0
+    descriptor?.symbol?.length > 0
       ? descriptor.symbol
       : descriptor.images && descriptor.images.length > 0
       ? descriptor.images[0]

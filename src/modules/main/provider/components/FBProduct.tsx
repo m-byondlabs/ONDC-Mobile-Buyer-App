@@ -1,4 +1,6 @@
+import axios from 'axios';
 import React, {useEffect, useRef, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {
   ActivityIndicator,
   Dimensions,
@@ -7,38 +9,36 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import axios from 'axios';
-import RBSheet from 'react-native-raw-bottom-sheet';
-import {Text} from 'react-native-paper';
 import FastImage from 'react-native-fast-image';
+import {Text} from 'react-native-paper';
+import RBSheet from 'react-native-raw-bottom-sheet';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
+import CloseSheetContainer from '../../../../components/bottomSheet/CloseSheetContainer';
+import Customizations from '../../../../components/customization/Customizations';
+import ManageQuantity from '../../../../components/customization/ManageQuantity';
+import VegNonVegTag from '../../../../components/products/VegNonVegTag';
+import useCartItems from '../../../../hooks/useCartItems';
+import useCustomizationStateHelper from '../../../../hooks/useCustomizationStateHelper';
+import useFormatNumber from '../../../../hooks/useFormatNumber';
+import useNetworkErrorHandling from '../../../../hooks/useNetworkErrorHandling';
+import useNetworkHandling from '../../../../hooks/useNetworkHandling';
+import userUpdateCartItem from '../../../../hooks/userUpdateCartItem';
+import useUpdateSpecificItemCount from '../../../../hooks/useUpdateSpecificItemCount';
+import {updateCartItems} from '../../../../redux/cart/actions';
+import {makeGlobalStyles} from '../../../../styles/styles';
+import {API_BASE_URL, CART, ITEM_DETAILS} from '../../../../utils/apiActions';
 import {CURRENCY_SYMBOLS} from '../../../../utils/constants';
+import {useAppTheme} from '../../../../utils/theme';
 import {
   getCustomizations,
   getPriceWithCustomisations,
   showToastWithGravity,
 } from '../../../../utils/utils';
-import useNetworkHandling from '../../../../hooks/useNetworkHandling';
-import useNetworkErrorHandling from '../../../../hooks/useNetworkErrorHandling';
-import {API_BASE_URL, CART, ITEM_DETAILS} from '../../../../utils/apiActions';
-import FBProductCustomization from './FBProductCustomization';
-import VegNonVegTag from '../../../../components/products/VegNonVegTag';
-import useCartItems from '../../../../hooks/useCartItems';
-import userUpdateCartItem from '../../../../hooks/userUpdateCartItem';
-import {areCustomisationsSame} from '../../product/details/ProductDetails';
-import {makeGlobalStyles} from '../../../../styles/styles';
-import Customizations from '../../../../components/customization/Customizations';
-import ManageQuantity from '../../../../components/customization/ManageQuantity';
-import useUpdateSpecificItemCount from '../../../../hooks/useUpdateSpecificItemCount';
-import {updateCartItems} from '../../../../redux/cart/actions';
-import useCustomizationStateHelper from '../../../../hooks/useCustomizationStateHelper';
-import CustomizationFooterButtons from './CustomizationFooterButtons';
 import FBProductDetails from '../../product/details/FBProductDetails';
-import CloseSheetContainer from '../../../../components/bottomSheet/CloseSheetContainer';
-import {useAppTheme} from '../../../../utils/theme';
-import {useTranslation} from 'react-i18next';
-import useFormatNumber from '../../../../hooks/useFormatNumber';
+import {areCustomisationsSame} from '../../product/details/ProductDetails';
+import CustomizationFooterButtons from './CustomizationFooterButtons';
+import FBProductCustomization from './FBProductCustomization';
 
 interface FBProduct {
   product: any;
@@ -298,7 +298,7 @@ const FBProduct: React.FC<FBProduct> = ({product}) => {
         `${API_BASE_URL}${ITEM_DETAILS}?id=${product.id}`,
         productSource.current.token,
       );
-      const details = data.response;
+      const details = data;
       setProductDetails(details);
 
       const url = `${API_BASE_URL}${CART}/${uid}`;
@@ -354,7 +354,7 @@ const FBProduct: React.FC<FBProduct> = ({product}) => {
         `${API_BASE_URL}${ITEM_DETAILS}?id=${product.id}`,
         productSource.current.token,
       );
-      setProductDetails(data.response);
+      setProductDetails(data);
       if (!preventCustomizeOpening) {
         showCustomization();
       }
